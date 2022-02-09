@@ -1,0 +1,25 @@
+name: pull_request
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  CI:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v2
+      # Setup .npmrc file to publish to Github
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+      - run: |
+          npm ci
+          npm run build
+          npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

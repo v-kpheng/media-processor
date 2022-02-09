@@ -20,6 +20,7 @@ module.exports = defineConfig({
         }
       }
     },
-    outDir: path.join(__dirname, "dist")
+    outDir: path.join(__dirname, "dist"),
+    emptyOutDir: true
   }
 })
