@@ -106,4 +106,4 @@ dist
 # Misc
 *.zip
 *.db
-electron/test_results/
+example/electron/test_results/

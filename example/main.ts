@@ -1,8 +1,16 @@
 import CameraSource from './js/camera-source';
 import CanvasTransform from './js/canvas-transform';
-import { MediaProcessor, MediaProcessorConnector } from '../lib/main';
+import { isSupported, MediaProcessor, MediaProcessorConnector } from '../lib/main';
 
 async function main() {
+  try {
+    await isSupported();
+  } catch(e) {
+    console.log(e);
+    alert('Something bad happened: ' + e);
+    return;
+  }
+
   const sourceSelector: any =document.getElementById('sourceSelector');
   const testruntimeSelector: any = document.getElementById('testruntime');
   
