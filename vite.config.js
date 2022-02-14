@@ -19,6 +19,7 @@ module.exports = defineConfig({
         globals: {
         }
       }
-    }
+    },
+    outDir: path.join(__dirname, "dist")
   }
 })
