@@ -5,10 +5,6 @@ import { v4 as uuid } from 'uuid';
 
 class MediaProcessor {
   uuid_: string;
-  // Application ID and source will be only provided by MediaProcessor telemetry
-  // as it seems redundant for MediaTransformer telemetry.
-  applicationId_: string;
-  source_: string;
   pipeline_: Pipeline
   transformers_: Array<Transformer>
   readable_: ReadableStream
@@ -16,9 +12,6 @@ class MediaProcessor {
 
   constructor () {
     this.uuid_ = uuid();
-    // TODO(jaoo): Figure out where to get these two members below from.
-    this.applicationId_ = ''
-    this.source_ = ''
     this.pipeline_ = null
     this.transformers_ = null
     this.readable_ = null
