@@ -1,4 +1,4 @@
-class EmptyTransformer implements Transformer { 
+class TextTransformer implements Transformer { 
   startCanvas_: any;
   startCtx_: CanvasRenderingContext2D;
   constructor() {
@@ -7,7 +7,7 @@ class EmptyTransformer implements Transformer {
   }
 
   async start(controller:TransformStreamDefaultController) {
-    console.log('empty transformer start');
+    console.log('text transformer start');
     this.startCanvas_ = new OffscreenCanvas(1, 1)
     this.startCtx_ = this.startCanvas_.getContext('2d')
     if (!this.startCtx_) {
@@ -19,14 +19,17 @@ class EmptyTransformer implements Transformer {
     this.startCanvas_.width = frame.displayWidth
     this.startCanvas_.height = frame.displayHeight
     let timestamp: number = frame.timestamp
-    this.startCtx_.drawImage(frame, 0, 0, frame.displayWidth, frame.displayHeight, 0, 0, 200, 200)
+    this.startCtx_.drawImage(frame, 0, 0, frame.displayWidth, frame.displayHeight)
+    this.startCtx_.font = "30px Arial";
+    this.startCtx_.fillStyle = "red";
+    this.startCtx_.fillText("Karin", 50, 50);
     frame.close()
     controller.enqueue(new VideoFrame(this.startCanvas_, {timestamp, alpha: 'discard'}));
   }
 
   flush(controller:TransformStreamDefaultController) {
-    console.log('empty transformer flush');
+    console.log('text transformer flush');
   }
 }
 
-export default EmptyTransformer;
+export default TextTransformer;
