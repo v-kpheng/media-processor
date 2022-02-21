@@ -11,11 +11,8 @@ export type VonageMetadata = {
 
 let _metadata: VonageMetadata;
 
-export function setMetadata(metadata: VonageMetadata): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    _metadata = metadata;
-    resolve();
-  });
+export function setMetadata(metadata: VonageMetadata): void {
+  _metadata = metadata;
 }
 
 function getMetadata(): VonageMetadata {

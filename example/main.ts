@@ -29,7 +29,7 @@ async function main() {
       appId: 'vonage-media-processor-example',
       sourceType: 'test'
     };
-    await setMetadata(metadata);
+    setMetadata(metadata);
     let mediaProcessor: MediaProcessor = new MediaProcessor();
     let transformers: Array<Transformer> = [];
     transformers.push(new CanvasTransform());
