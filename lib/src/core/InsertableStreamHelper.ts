@@ -7,19 +7,22 @@ class InsertableStreamHelper {
     this.generator_ = null;
   }
   
-  async init(track: MediaStreamTrack) {
-    try {
-      this.processor_ = new MediaStreamTrackProcessor(track);
-    } catch (e) {
-      alert(`[InsertableStreamHelper] MediaStreamTrackProcessor failed: ${e}`);
-      throw e;
-    }
-    try {
-      this.generator_ = new MediaStreamTrackGenerator(track.kind);
-    } catch (e) {
-      alert(`[InsertableStreamHelper] MediaStreamTrackGenerator failed: ${e}`);
-      throw e;
-    }   
+  init(track: MediaStreamTrack): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      try {
+        this.processor_ = new MediaStreamTrackProcessor(track);
+      } catch (e) {
+        console.log(`[InsertableStreamHelper] MediaStreamTrackProcessor failed: ${e}`);
+        reject(e)
+      }
+      try {
+        this.generator_ = new MediaStreamTrackGenerator(track.kind);
+      } catch (e) {
+        console.log(`[InsertableStreamHelper] MediaStreamTrackGenerator failed: ${e}`);
+        reject(e)
+      }
+      resolve()
+    })
   }
 
   getReadable(): ReadableStream {
