@@ -4,7 +4,8 @@
 
     "compilerOptions": {
         "outDir": "dist",
-        "lib": ["es2019", "es2020.promise", "es2020.bigint", "es2020.string"],
+        "declaration": true,
+        "lib": ["es2019", "es2020.promise", "es2020.bigint", "es2020.string", "dom"],
         "module": "commonjs",
         "target": "es2019",
         "strict": true,
@@ -12,11 +13,12 @@
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "types": [
-            "@types/emscripten",
-            "@types/offscreencanvas",
-            "@types/node"
-        ]
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "inlineSources": true
     },
     "include": ["lib/**/*"]
 }

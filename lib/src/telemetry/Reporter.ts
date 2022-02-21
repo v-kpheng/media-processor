@@ -35,7 +35,7 @@ interface Report {
 }
 
 const getTelemetryServerUrl = (isDev: boolean): string => {
-  return isDev ? pack.default.telemetryServerUrls.dev : pack.default.telemetryServerUrls.pro;
+  return isDev ? pack.telemetryServerUrls.dev : pack.telemetryServerUrls.pro;
 }
 
 class ReportBuilder {
@@ -121,8 +121,7 @@ class Reporter {
                      'Content-Type': 'application/json'
                 }
             }
-            let devTelemetryEnvironment: boolean = (pack.default.telemetryEnvironment === 'dev');
-            axiosInstance.post(getTelemetryServerUrl(devTelemetryEnvironment), serializeReport(report), config)
+            axiosInstance.post(getTelemetryServerUrl(true), serializeReport(report), config)
             .then((res: AxiosResponse) => {
                 console.log(res);
                 resolve('success')

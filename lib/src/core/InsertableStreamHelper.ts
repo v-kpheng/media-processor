@@ -10,13 +10,20 @@ class InsertableStreamHelper {
   init(track: MediaStreamTrack): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        this.processor_ = new MediaStreamTrackProcessor(track);
+        this.processor_ = new MediaStreamTrackProcessor(track as any);
       } catch (e) {
         console.log(`[InsertableStreamHelper] MediaStreamTrackProcessor failed: ${e}`);
         reject(e)
       }
       try {
-        this.generator_ = new MediaStreamTrackGenerator(track.kind);
+        if(track.kind === "audio"){
+          this.generator_ = new MediaStreamTrackGenerator({kind: "audio"});
+        }else if(track.kind === "video"){
+          this.generator_ = new MediaStreamTrackGenerator({kind: "video"});
+        } else {
+          reject("kind not supported")
+        }
+        
       } catch (e) {
         console.log(`[InsertableStreamHelper] MediaStreamTrackGenerator failed: ${e}`);
         reject(e)

@@ -25,7 +25,7 @@ class InternalTransformer implements Transformer {
 
     this.transformerType_ = 'Custom';
     if ('getTransformerType' in transformer) {
-      this.transformerType_ = transformer.getTransformerType();
+      this.transformerType_ = (transformer as any).getTransformerType();
     }
 
     const report: Report = new ReportBuilder()
@@ -62,7 +62,7 @@ class InternalTransformer implements Transformer {
     if(this.transformer_){
       if(!this.shouldStop_){
         try {
-          await this.transformer_.transform(frame, controller);
+          await this.transformer_.transform?.(frame, controller);
           ++this.framesTransformed_;
         } catch(e) {
           const report: Report = new ReportBuilder()
@@ -154,21 +154,16 @@ class Pipeline {
         console.log('[Pipeline] Setup.');
         await writeable.abort()
         await orgReader.cancel()
-        readable = null;
-        writeable = null
       })
       .catch(async e => {
-        if (readable.cancel) {
-          console.log(
-              '[Pipeline] Shutting down streams after abort.');
-        } else {
-          console.error(
-              '[Pipeline] Error from stream transform:', e);
-        }
+        readable.cancel().then(() =>{
+          console.log('[Pipeline] Shutting down streams after abort.');
+        })
+        .catch(e => {
+          console.error('[Pipeline] Error from stream transform:', e);
+        })
         await writeable.abort(e)
         await orgReader.cancel(e)
-        readable = null;
-        writeable = null
       });
     } catch (e) {
       this.destroy();
