@@ -2,39 +2,57 @@ import * as pack from './../../../package.json';
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { Optional } from 'typescript-optional';
 
-const getTelemetryServerUrl = (isDev: boolean): string => {
-  return isDev ? pack.default.telemetryServerUrls.dev : pack.default.telemetryServerUrls.pro;
+export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice';
+
+export type VonageMetadata = {
+  sourceType: VonageSourceType,
+  appId: string
+}
+
+let _metadata: VonageMetadata;
+
+export function setMetadata(metadata: VonageMetadata): void {
+  _metadata = metadata;
+}
+
+function getMetadata(): VonageMetadata {
+  return _metadata;
 }
 
 interface Report {
   action: Optional<string>;
-  applicationId: Optional<string>; // TODO(jaoo)
+  applicationId: Optional<string>;
   timestamp: number;
   fps: Optional<number>;
   framesTransformed: Optional<number>;
   guid: Optional<string>;
   highestFrameTransformCpu: Optional<number>; // TODO(jaoo)
   message: Optional<string>;
-  source: Optional<string>; // TODO(jaoo)
+  source: Optional<string>;
   transformedFps: Optional<number>;
   transformerType: Optional<string>;
   variation: Optional<string>;
+}
+
+const getTelemetryServerUrl = (isDev: boolean): string => {
+  return isDev ? pack.default.telemetryServerUrls.dev : pack.default.telemetryServerUrls.pro;
 }
 
 class ReportBuilder {
   private readonly _report: Report;
 
   constructor() {
+    const metadata: VonageMetadata = getMetadata();
     this._report = {
       action: Optional.empty<string>(),
-      applicationId: Optional.empty<string>(),
+      applicationId: Optional.ofNullable((metadata !== undefined) ? metadata.appId : null),
       timestamp: Date.now(),
       fps: Optional.empty<number>(),
       framesTransformed: Optional.empty<number>(),
       guid: Optional.empty<string>(),
       highestFrameTransformCpu: Optional.empty<number>(),
       message: Optional.empty<string>(),
-      source: Optional.empty<string>(),
+      source: Optional.ofNullable((metadata !== undefined) ? metadata.sourceType : null),
       transformedFps: Optional.empty<number>(),
       transformerType: Optional.empty<string>(),
       variation: Optional.empty<string>()
