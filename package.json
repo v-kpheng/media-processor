@@ -18,7 +18,8 @@
     "@types/node": "^17.0.10",
     "@types/dom-mediacapture-transform": "^0.1.2",
     "axios": "^0.25.0",
-    "typescript-optional": "3.0.0-alpha.3"
+    "typescript-optional": "3.0.0-alpha.3",
+    "uuid": "~8.3.2"
   },
   "files": [
     "dist"
