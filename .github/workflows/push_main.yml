@@ -17,6 +17,16 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
+      - name: Bump up version
+        run: |
+          npm config set git-tag-version false
+          # Note: We might bump up the version differently (major/minor/patch).
+          npm version patch
+      - name: Commit new version string
+        uses: actions-js/push@v1.3
+        with:
+          branch: 'main'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           npm ci
           npm run build
