@@ -5,17 +5,13 @@ import { v4 as uuid } from 'uuid';
 
 class MediaProcessor {
   uuid_: string;
-  pipeline_: Pipeline
-  transformers_: Array<Transformer>
-  readable_: ReadableStream
-  writable_: WritableStream
+  pipeline_!: Pipeline;
+  transformers_!: Array<Transformer>;
+  readable_!: ReadableStream;
+  writable_!: WritableStream;
 
   constructor () {
     this.uuid_ = uuid();
-    this.pipeline_ = null
-    this.transformers_ = null
-    this.readable_ = null
-    this.writable_ = null
     const report: Report = new ReportBuilder()
       .action('MediaProcessor')
       .guid(this.uuid_)

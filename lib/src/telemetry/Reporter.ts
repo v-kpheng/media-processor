@@ -1,6 +1,6 @@
-import * as pack from './../../../package.json';
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { Optional } from 'typescript-optional';
+import { telemetryEnvironmentUrl } from '../utils/package-json';
 
 export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice';
 
@@ -32,10 +32,6 @@ interface Report {
   transformedFps: Optional<number>;
   transformerType: Optional<string>;
   variation: Optional<string>;
-}
-
-const getTelemetryServerUrl = (isDev: boolean): string => {
-  return isDev ? pack.default.telemetryServerUrls.dev : pack.default.telemetryServerUrls.pro;
 }
 
 class ReportBuilder {
@@ -121,8 +117,7 @@ class Reporter {
                      'Content-Type': 'application/json'
                 }
             }
-            let devTelemetryEnvironment: boolean = (pack.default.telemetryEnvironment === 'dev');
-            axiosInstance.post(getTelemetryServerUrl(devTelemetryEnvironment), serializeReport(report), config)
+            axiosInstance.post(telemetryEnvironmentUrl, serializeReport(report), config)
             .then((res: AxiosResponse) => {
                 console.log(res);
                 resolve('success')
