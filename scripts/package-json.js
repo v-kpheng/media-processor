@@ -10,5 +10,4 @@ fs.writeFileSync('./lib/src/utils/package-json.ts', `\
  * The current version of the library.
  */
 export const version: string = '${pkg.version}';
-export const telemetryEnvironmentUrl: string = '${pkg.telemetryServerUrls[pkg.telemetryEnvironment]}';
 `);

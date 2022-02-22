@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node ./scripts/package-json.js && vite",
     "build": "node ./scripts/package-json.js && tsc && vite build && tsc ./dist/media-processor.es.js --allowJs --resolveJsonModule --declaration --emitDeclarationOnly --outDir dist/types",
+    "build:dev": "node ./scripts/package-json.js && tsc && vite build --mode development && tsc ./dist/media-processor.es.js --allowJs --resolveJsonModule --declaration --emitDeclarationOnly --outDir dist/types",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -37,11 +38,6 @@
     "@tsconfig/node12": "^1.0.1",
     "typescript": "^4.5.4",
     "vite": "^2.7.2"
-  },
-  "telemetryEnvironment": "dev",
-  "telemetryServerUrls": {
-    "dev": "https://hlg.dev.tokbox.com/dev/logging/vcp_webrtc",
-    "pro": "https://hlg.tokbox.com/prod/logging/vcp_webrtc"
   },
   "repository": "https://github.com/vonage/media-processor",
   "publishConfig": {
