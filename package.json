@@ -1,6 +1,6 @@
 {
   "name": "@vonage/media-processor",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Guy Mininberg <guy.mininberg@vonage.com>",
   "contributors": [
     "Guy Mininberg <guy.mininberg@vonage.com>",
@@ -24,7 +24,7 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/types/media-processor.es.d.ts",
   "main": "./dist/media-processor.umd.js",
   "module": "./dist/media-processor.es.js",
   "exports": {
