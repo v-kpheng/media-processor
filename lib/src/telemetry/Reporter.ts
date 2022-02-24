@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { Optional } from 'typescript-optional';
-import { telemetryEnvironmentUrl } from '../utils/package-json';
 
 export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice';
 
@@ -117,7 +116,9 @@ class Reporter {
                      'Content-Type': 'application/json'
                 }
             }
-            axiosInstance.post(telemetryEnvironmentUrl, serializeReport(report), config)
+            // @ts-ignore
+            const telemetryServerUrl: string = import.meta.env.VITE_TELEMETRY_SERVER_URL || 'https://hlg.tokbox.com/prod/logging/vcp_webrtc';
+            axiosInstance.post(telemetryServerUrl, serializeReport(report), config)
             .then((res: AxiosResponse) => {
                 console.log(res);
                 resolve('success')
