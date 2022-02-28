@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { Optional } from 'typescript-optional';
+import { version } from '../utils/package-json';
 
 export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice';
 
@@ -31,6 +32,9 @@ interface Report {
   transformedFps: Optional<number>;
   transformerType: Optional<string>;
   variation: Optional<string>;
+  videoHeight: Optional<number>;
+  videoWidth: Optional<number>;
+  version: string;
 }
 
 class ReportBuilder {
@@ -50,7 +54,10 @@ class ReportBuilder {
       source: Optional.ofNullable((metadata !== undefined) ? metadata.sourceType : null),
       transformedFps: Optional.empty<number>(),
       transformerType: Optional.empty<string>(),
-      variation: Optional.empty<string>()
+      variation: Optional.empty<string>(),
+      videoHeight: Optional.empty<number>(),
+      videoWidth: Optional.empty<number>(),
+      version: version
     };
   }
 
@@ -94,6 +101,16 @@ class ReportBuilder {
     return this;
   }
 
+  videoHeight(videoHeight: number) {
+    this._report.videoHeight = Optional.ofNullable(videoHeight);
+    return this;
+  }
+
+  videoWidth(videoWidth: number) {
+    this._report.videoWidth = Optional.ofNullable(videoWidth);
+    return this;
+  }
+
   build(): Report {
     return this._report;
   }
@@ -117,7 +134,7 @@ class Reporter {
                 }
             }
             // @ts-ignore
-            const telemetryServerUrl: string = import.meta.env.VITE_TELEMETRY_SERVER_URL || 'https://hlg.tokbox.com/prod/logging/vcp_webrtc';
+            const telemetryServerUrl: string = import.meta.env.VITE_TELEMETRY_SERVER_URL ?? 'https://hlg.tokbox.com/prod/logging/vcp_webrtc';
             axiosInstance.post(telemetryServerUrl, serializeReport(report), config)
             .then((res: AxiosResponse) => {
                 console.log(res);
