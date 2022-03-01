@@ -4,6 +4,7 @@ import EmptyTransformer from './js/empty-transform';
 import TextTransformer from './js/text-transform';
 
 import { isSupported, MediaProcessor, MediaProcessorConnector } from '../lib/main';
+import ImageSource from './js/image-source';
 
 async function main() {
   try {
@@ -13,12 +14,12 @@ async function main() {
     alert('Something bad happened: ' + e);
     return;
   }
-
+  
   const sourceSelector: any =document.getElementById('sourceSelector');
   const testruntimeSelector: any = document.getElementById('testruntime');
   const tranfromersCountSelector: any = document.getElementById('trasformersCount');
   
-  let source_: CameraSource = new CameraSource();
+  let source_: any;
   async function updatePipelineSource() {
     const sourceType = sourceSelector.options[sourceSelector.selectedIndex].value;
     const testruntimeType = testruntimeSelector.options[testruntimeSelector.selectedIndex].value;
@@ -27,8 +28,12 @@ async function main() {
     if(sourceType === 'stop'){
       await source_.stopMediaProcessorConnector()
       return;
+    } else if(sourceType === 'camera'){
+      source_ = new CameraSource()
+    }else if(sourceType === 'image'){
+      source_ = new ImageSource()
     }
-
+    await source_.init()
     const testName: string = "db_canvas_test";
     //this is how we build transformers.
     let mediaProcessor: MediaProcessor = new MediaProcessor();
