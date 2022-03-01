@@ -38,15 +38,71 @@ async function main() {
     //this is how we build transformers.
     let mediaProcessor: MediaProcessor = new MediaProcessor();
     let transformers: Array<Transformer> = [];
-    
-    transformers.push(new CanvasTransform());
+
+    if(trasformersCountType === "1"){
+      transformers.push(new CanvasTransform());
+    }
     if(trasformersCountType === "2"){
       transformers.push(new EmptyTransformer());
     }
     if(trasformersCountType === "3"){
+      transformers.push(new TextTransformer());
+    }
+    if(trasformersCountType === "4"){
+      transformers.push(new CanvasTransform());
+      transformers.push(new EmptyTransformer());
+    }
+    if(trasformersCountType === "5"){
+      transformers.push(new CanvasTransform());
+      transformers.push(new TextTransformer());
+    }
+    if(trasformersCountType === "6"){
+      transformers.push(new EmptyTransformer());
+      transformers.push(new CanvasTransform());
+    }
+    if(trasformersCountType === "7"){
       transformers.push(new EmptyTransformer());
       transformers.push(new TextTransformer());
     }
+    if(trasformersCountType === "8"){
+      transformers.push(new TextTransformer());
+      transformers.push(new CanvasTransform());
+    }
+    if(trasformersCountType === "9"){
+      transformers.push(new TextTransformer());
+      transformers.push(new EmptyTransformer());
+    }
+    if(trasformersCountType === "10"){
+      transformers.push(new CanvasTransform());
+      transformers.push(new EmptyTransformer());
+      transformers.push(new TextTransformer());
+    }
+    if(trasformersCountType === "11"){
+      transformers.push(new CanvasTransform());
+      transformers.push(new TextTransformer());
+      transformers.push(new EmptyTransformer());
+    }
+    if(trasformersCountType === "12"){
+      transformers.push(new EmptyTransformer());
+      transformers.push(new CanvasTransform());
+      transformers.push(new TextTransformer());
+    }
+    if(trasformersCountType === "13"){
+      transformers.push(new EmptyTransformer());
+      transformers.push(new TextTransformer());
+      transformers.push(new CanvasTransform());
+    }
+    if(trasformersCountType === "14"){
+      transformers.push(new TextTransformer());
+      transformers.push(new EmptyTransformer());
+      transformers.push(new CanvasTransform());
+    }
+    if(trasformersCountType === "15"){
+      transformers.push(new TextTransformer());
+      transformers.push(new CanvasTransform());
+      transformers.push(new EmptyTransformer());
+    }
+
 
     //this function should be tested.
     mediaProcessor.setTransformers(transformers);
@@ -62,13 +118,13 @@ async function main() {
         await source_.stopMediaProcessorConnector().then(() => {
           setTimeout(() => {
             location.reload();
-          }, 1000); 
+          }, 5000); 
         })
         .catch(e =>{
           console.log(e);
           setTimeout(() => {
             location.reload();
-          }, 1000); 
+          }, 5000); 
         })
         
       }, testruntimeType);

@@ -79,7 +79,7 @@ class CanvasTransform{
 
   /** @override */
   flush() {
-    console.log('[CanvasTransform] flush');
+    console.log('canvas transformer flush');
   }
 }
 

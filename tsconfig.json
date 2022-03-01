@@ -15,7 +15,10 @@
         "types": [
             "@types/emscripten",
             "@types/offscreencanvas",
-            "@types/node"
+            "@types/node",
+            "cypress",
+            "cypress-wait-until"
+
         ]
     },
     "include": ["lib/**/*"]

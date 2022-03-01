@@ -14,14 +14,15 @@
     "cy:run": "cypress run"
   },
   "dependencies": {
-    "@types/emscripten": "^1.39.6",
-    "wasm-feature-detect": "^1.2.11",
-    "@types/offscreencanvas": "^2019.6.4",
     "@types/dom-mediacapture-transform": "^0.1.2",
+    "@types/emscripten": "^1.39.6",
     "@types/node": "^17.0.10",
+    "@types/offscreencanvas": "^2019.6.4",
     "axios": "^0.25.0",
+    "cypress-wait-until": "^1.7.2",
+    "typescript-optional": "3.0.0-alpha.3",
     "uuid": "^8.3.2",
-    "typescript-optional": "3.0.0-alpha.3"
+    "wasm-feature-detect": "^1.2.11"
   },
   "main": "./dist/media-processor.es.js",
   "devDependencies": {

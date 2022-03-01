@@ -19,7 +19,7 @@ class EmptyTransformer implements Transformer {
     this.startCanvas_.width = frame.displayWidth
     this.startCanvas_.height = frame.displayHeight
     let timestamp: number = frame.timestamp
-    this.startCtx_.drawImage(frame, 0, 0, frame.displayWidth, frame.displayHeight, 0, 0, 200, 200)
+    this.startCtx_.drawImage(frame, 0, 0, frame.displayWidth, frame.displayHeight, 0, 0, 350, 350)
     frame.close()
     controller.enqueue(new VideoFrame(this.startCanvas_, {timestamp, alpha: 'discard'}));
   }
