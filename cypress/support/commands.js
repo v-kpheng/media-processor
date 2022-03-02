@@ -26,9 +26,6 @@
 
 import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
 
-import 'cypress-wait-until';
-
-
 
 addMatchImageSnapshotCommand({
     failureThreshold: 0.03, // threshold for entire image

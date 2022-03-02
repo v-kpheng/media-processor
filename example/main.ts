@@ -3,7 +3,7 @@ import CanvasTransform from './js/canvas-transform';
 import EmptyTransformer from './js/empty-transform';
 import TextTransformer from './js/text-transform';
 
-import { isSupported, MediaProcessor, MediaProcessorConnector } from '../lib/main';
+import { isSupported, MediaProcessor, MediaProcessorConnector, setMetadata, VonageMetadata } from '../lib/main';
 import ImageSource from './js/image-source';
 
 async function main() {
@@ -35,7 +35,11 @@ async function main() {
     }
     await source_.init()
     const testName: string = "db_canvas_test";
-    //this is how we build transformers.
+    const metadata: VonageMetadata = {
+      appId: 'vonage-media-processor-example',
+      sourceType: 'test'
+    };
+    setMetadata(metadata);
     let mediaProcessor: MediaProcessor = new MediaProcessor();
     let transformers: Array<Transformer> = [];
 

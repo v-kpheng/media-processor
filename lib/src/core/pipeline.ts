@@ -2,6 +2,9 @@ import { Key } from '../telemetry/Key';
 import { Report, ReportBuilder, Reporter } from '../telemetry/Reporter';
 import { v4 as uuid } from 'uuid';
 
+// Note: TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL is expresed in frames (frames transformed).
+const TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL = 500;
+
 class InternalTransformer implements Transformer {
   uuid_: string;
   transformerType_: string;
@@ -11,7 +14,9 @@ class InternalTransformer implements Transformer {
   shouldStop_: boolean
   isFlashed_: boolean
   framesFromSource_: number;
-  firstTransformerTransformCallTimestamp_: number;
+  mediaTransformerQosReportStartTimestamp_: number;
+  videoHeight_: number;
+  videoWidth_: number;
 
   constructor(transformer: Transformer){
     this.uuid_ = uuid();
@@ -21,11 +26,13 @@ class InternalTransformer implements Transformer {
     this.isFlashed_ = false;
     this.framesFromSource_ = 0;
     this.fps_ = 0;
-    this.firstTransformerTransformCallTimestamp_ = 0;
+    this.mediaTransformerQosReportStartTimestamp_ = 0;
+    this.videoHeight_ = 0;
+    this.videoWidth_ = 0;
 
     this.transformerType_ = 'Custom';
     if ('getTransformerType' in transformer) {
-      this.transformerType_ = transformer.getTransformerType();
+      this.transformerType_ = (transformer as any).getTransformerType();
     }
 
     const report: Report = new ReportBuilder()
@@ -55,15 +62,20 @@ class InternalTransformer implements Transformer {
   }
 
   async transform(frame:any, controller:TransformStreamDefaultController) {
-    if (this.firstTransformerTransformCallTimestamp_ === 0) {
-      this.firstTransformerTransformCallTimestamp_ = Date.now();
+    if (this.mediaTransformerQosReportStartTimestamp_ === 0) {
+      this.mediaTransformerQosReportStartTimestamp_ = Date.now();
     }
+    this.videoHeight_ = frame?.displayHeight ?? 0;
+    this.videoWidth_ = frame?.displayWidth ?? 0;
     ++this.framesFromSource_;
     if(this.transformer_){
       if(!this.shouldStop_){
         try {
-          await this.transformer_.transform(frame, controller);
+          await this.transformer_.transform?.(frame, controller);
           ++this.framesTransformed_;
+          if (this.framesTransformed_ === TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL) {
+            this.mediaTransformerQosReport();
+          }
         } catch(e) {
           const report: Report = new ReportBuilder()
             .action('MediaTransformer')
@@ -98,7 +110,23 @@ class InternalTransformer implements Transformer {
         Reporter.report(error);
       }
     }
-    let timeElapsed_s = ((Date.now() - this.firstTransformerTransformCallTimestamp_) / 1000);
+    this.mediaTransformerQosReport();
+    const deleteReport: Report = new ReportBuilder()
+      .action('MediaTransformer')
+      .guid(this.uuid_)
+      .transformerType(this.transformerType_)
+      .variation('Delete')
+      .build();
+    Reporter.report(deleteReport);
+  }
+
+  stop(){
+    console.log('[Pipeline] Stop stream.');
+    this.shouldStop_ = true
+  }
+
+  mediaTransformerQosReport(): void {
+    let timeElapsed_s = ((Date.now() - this.mediaTransformerQosReportStartTimestamp_) / 1000);
     let fps: number = this.framesFromSource_ / timeElapsed_s;
     let transformedFps: number = this.framesTransformed_ / timeElapsed_s;
     const qos: Report = new ReportBuilder()
@@ -108,24 +136,14 @@ class InternalTransformer implements Transformer {
       .framesTransformed(this.framesTransformed_)
       .guid(this.uuid_)
       .transformerType(this.transformerType_)
+      .videoHeight(this.videoHeight_)
+      .videoWidth(this.videoWidth_)
       .variation('QoS')
       .build();
     Reporter.report(qos);
-    const deleteReport: Report = new ReportBuilder()
-      .action('MediaTransformer')
-      .guid(this.uuid_)
-      .transformerType(this.transformerType_)
-      .variation('Delete')
-      .build();
-    Reporter.report(deleteReport);
-    this.firstTransformerTransformCallTimestamp_ = 0;
+    this.mediaTransformerQosReportStartTimestamp_ = 0;
     this.framesFromSource_ = 0;
     this.framesTransformed_ = 0;
-  }
-
-  stop(){
-    console.log('[Pipeline] Stop stream.');
-    this.shouldStop_ = true
   }
 }
 
@@ -154,21 +172,16 @@ class Pipeline {
         console.log('[Pipeline] Setup.');
         await writeable.abort()
         await orgReader.cancel()
-        readable = null;
-        writeable = null
       })
       .catch(async e => {
-        if (readable.cancel) {
-          console.log(
-              '[Pipeline] Shutting down streams after abort.');
-        } else {
-          console.error(
-              '[Pipeline] Error from stream transform:', e);
-        }
+        readable.cancel().then(() =>{
+          console.log('[Pipeline] Shutting down streams after abort.');
+        })
+        .catch(e => {
+          console.error('[Pipeline] Error from stream transform:', e);
+        })
         await writeable.abort(e)
         await orgReader.cancel(e)
-        readable = null;
-        writeable = null
       });
     } catch (e) {
       this.destroy();
