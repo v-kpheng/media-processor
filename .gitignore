@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Misc
+*.zip
+*.db
+example/electron/test_results/
+lib/src/utils/package-json.ts
