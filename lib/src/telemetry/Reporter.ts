@@ -4,13 +4,37 @@ import { version } from '../utils/package-json';
 
 export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice';
 
-export type VonageMetadata = {
+/**
+ * Specifies the addional information being sent with the telemetry collected by the library.
+ */
+ export type VonageMetadata = {
+   /**
+    * Type of source using the library.
+    */
   sourceType: VonageSourceType,
-  appId: string
+   /**
+    * Some string identifier identifying the application using the library.
+    */
+    appId: string
 }
 
 let _metadata: VonageMetadata;
 
+/**
+ * Sets some metadata for telemetry.
+ *
+ * @param metadata Specifies the addional information being sent with the telemetry collected by the library.
+ *
+ * @example
+ *
+ * ```ts
+ *   const metadata: VonageMetadata = {
+ *     appId: 'vonage-media-processor-example',
+ *     sourceType: 'test'
+ *   };
+ *   setMetadata(metadata);
+ * ```
+ */
 export function setMetadata(metadata: VonageMetadata): void {
   _metadata = metadata;
 }

@@ -19,7 +19,13 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
       - run: |
           npm ci
+          npm run doc
           npm run build:dev
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy documentation to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist/docs
