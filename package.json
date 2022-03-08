@@ -6,6 +6,15 @@
     "Guy Mininberg <guy.mininberg@vonage.com>",
     "Jose Olivera <joseantonio.oliveraortega@vonage.com>"
   ],
+  "keywords": [
+    "vonage",
+    "vonage api",
+    "client",
+    "media processing",
+    "insertable streams",
+    "opentok",
+    "nexmo"
+  ],
   "scripts": {
     "build": "npm-run-all build:js doc",
     "build:js": "node ./scripts/package-json.js && tsc && vite build && tsc --declaration --emitDeclarationOnly --outDir dist/types",
