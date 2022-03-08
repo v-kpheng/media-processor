@@ -3,12 +3,39 @@ import { Key } from '../telemetry/Key'
 import { Report, ReportBuilder, Reporter } from '../telemetry/Reporter';
 import { v4 as uuid } from 'uuid';
 
+/**
+ * Media processor class holding and running the media processing logic.
+ *
+ * @example
+ *
+ * ```ts
+ *   let mediaProcessor: MediaProcessor = new MediaProcessor();
+ *   let transformers: Array<Transformer> = [];
+ *   transformers.push(new CanvasTransform());
+ *   mediaProcessor.setTransformers(transformers);
+ * ```
+ */
 class MediaProcessor {
+  /**
+   * @private
+   */
   uuid_: string;
-  pipeline_!: Pipeline;
-  transformers_!: Array<Transformer>;
-  readable_!: ReadableStream;
-  writable_!: WritableStream;
+  /**
+   * @private
+   */
+   pipeline_!: Pipeline;
+  /**
+   * @private
+   */
+   transformers_!: Array<Transformer>;
+  /**
+   * @private
+   */
+   readable_!: ReadableStream;
+  /**
+   * @private
+   */
+   writable_!: WritableStream;
 
   constructor () {
     this.uuid_ = uuid();
@@ -20,6 +47,12 @@ class MediaProcessor {
     Reporter.report(report);
   }
 
+  /**
+   * Starts running the tranformation logic performed by the media processor instance.
+   *
+   * @param readable Readable stream associated to the media source being processed.
+   * @param writable Writable stream associated to the resulting media once processed.
+   */
   transform (
     readable: ReadableStream,
     writable: WritableStream
@@ -29,6 +62,9 @@ class MediaProcessor {
     return this.transformInternal()
   }
 
+  /**
+   * @private
+   */
   transformInternal (): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.transformers_ || this.transformers_.length === 0) {
@@ -56,6 +92,11 @@ class MediaProcessor {
     })
   }
 
+  /**
+   * Sets an array of transfromer instances that will be hold and ran by the media processor instance.
+   *
+   * @param transformers An array of transformer instances.
+   */
   setTransformers (transformers: Array<Transformer>): Promise<void> {
     const report: Report = new ReportBuilder()
       .action('MediaProcessor')
@@ -71,6 +112,9 @@ class MediaProcessor {
     return Promise.resolve()
   }
 
+  /**
+   * Stops running the tranformation logic performed by the media processor instance.
+   */
   destroy(): Promise<void> {
     return new Promise<void>(resolve => {
       if (this.pipeline_) {
