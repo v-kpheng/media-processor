@@ -107,8 +107,10 @@ async function main() {
       transformers.push(new EmptyTransformer());
     }
 
+    if(trasformersCountType === "16"){
+      transformers.push();
+    }
 
-    //this function should be tested.
     mediaProcessor.setTransformers(transformers);
 
     //use this lines as they are now

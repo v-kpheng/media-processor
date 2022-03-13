@@ -34,18 +34,21 @@ addMatchImageSnapshotCommand({
     capture: 'viewport', // capture viewport in screenshot
   });
 
-// Cypress.Commands.add('waitForTelemetry', (num) => {
-//     cy.intercept('POST', "https://hlg.dev.tokbox.com/dev/logging/vcp_webrtc").as('telem');
-//     if (num === '3'){
-//         cy.wait('@telem').continue 
-//         cy.wait('@telem').continue 
-//         cy.wait('@telem').continue 
-//     }
-//     if (num === '2'){
-//         cy.wait('@telem').continue 
-//         cy.wait('@telem').continue 
-//     }
-// })
+Cypress.Commands.add('telemetryCheck', (num) => {
+    cy.intercept('POST', "https://hlg.dev.tokbox.com/dev/logging/vcp_webrtc", (req) => {
+        if (req.body.variation.indexOf('Create') > -1){
+            req.alias = "create"
+        } else if (req.body.variation.indexOf('Update') > -1) {
+                req.alias = "update"
+        } else if (req.body.variation.indexOf('QoS') > -1){
+            req.alias = "qos"
+        } else if (req.body.variation.indexOf('Delete') > -1){
+            req.alias = "delete"
+        } else if (req.body.variation.indexOf('Error') > -1){
+            req.alias = "error" 
+        }
+    })
+})
 
 Cypress.Commands.add('configAndRun', (variation, time, transformers_count) => {
     cy.wait(1000)
@@ -54,23 +57,33 @@ Cypress.Commands.add('configAndRun', (variation, time, transformers_count) => {
     cy.get('#sourceSelector').select('Image', { force: true });
     cy.get('.sourceVideo').then(($source) => {
         cy.get($source).should('be.visible').and('have.class', 'video sourceVideo').and('have.css', 'margin', '0px 20px 20px 0px');
-        cy.wait(200)
+        cy.wait(100)
         cy.get($source).matchImageSnapshot('source', {capture: 'viewport'})
     })
     cy.get('#outputVideoContainer > .video').then(($output) => {
         cy.get($output).should('be.visible').and('have.class','video sinkVideo').and('have.css', 'margin', '0px 0px 20px');
         cy.get($output).matchImageSnapshot(variation); // test transformed output matches to the saved output image
     })
-    cy.wait(35000)
-//check all telemetries were sent 
+    cy.wait(33000)
+    cy.get('#outputVideoContainer > .video').then(($output) => {
+        cy.get($output).matchImageSnapshot('source');
+    })
+    cy.wait(3000)
+// check all telemetries were sent 
     if (transformers_count === '1'){
-        cy.get('@telem.all').its('callCount').should('equal', 6)
+        cy.get('@create.all').should('have.length', 2)
+        cy.get('@update.all').should('have.length', 1)
+        cy.get('@delete.all').should('have.length', 2)
     }
     if (transformers_count === '2'){
-        cy.get('@telem.all').its('callCount').should('equal', 9)
+        cy.get('@create.all').should('have.length', 3)
+        cy.get('@update.all').should('have.length', 1)
+        cy.get('@delete.all').should('have.length', 3)  
     }
     if (transformers_count === '3'){
-        cy.get('@telem.all').its('callCount').should('equal', 12)
+        cy.get('@create.all').should('have.length', 4)
+        cy.get('@update.all').should('have.length', 1)
+        cy.get('@delete.all').should('have.length', 4)   
     }
 })
 
