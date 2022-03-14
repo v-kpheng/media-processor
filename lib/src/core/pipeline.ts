@@ -7,6 +7,9 @@ import Emittery from 'emittery'
  * WarningType specifies the type of warning from the transformer
  */
 export enum WarningType {
+  /**
+   * Warning about change in process rate
+   */
   FPS_DROP = 'fps_drop'
 }
 
@@ -14,20 +17,28 @@ export enum WarningType {
  * DropInfo gives info about the frame rate of the transformer
  */
 export type DropInfo = {
+  /**
+   * The rate predicted rate of the track
+   */
   requested: number
+  /**
+   * The actual rate of the track
+   */
   current: number
 }
 
 /**
- * ErrorPostion specifies the function which the error (exception) happened
+ * ErrorFunction specifies the function which the error (exception) happened
  */
-export type ErrorPostion = 'start' | 'transform' | 'flush'
+export type ErrorFunction = 'start' | 'transform' | 'flush'
 
 /**
  * EventMetaData the meta data of the event.
- * transformerIndex is the transformer index in the array of transformers.
  */
 export type EventMetaData = {
+  /**
+   * The transformer index in the array of transformers.
+   */
   transformerIndex: number
 };
 
@@ -37,6 +48,7 @@ export type EventMetaData = {
  *  {
  *    eventMetaData: { transformerIndex: 0},
  *    warningType: WarningType.FPS_DROP
+ *    dropInfo: {requested: 30, current:20}
  *  }
  * ```
  */
@@ -58,7 +70,7 @@ export type WarnData = {
  */
 export type ErrorData = {
   eventMetaData: EventMetaData
-  position: ErrorPostion
+  function: ErrorFunction
   error: unknown
 }
 
@@ -72,6 +84,7 @@ export type EventDataMap = {
 
 // Note: TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL is expresed in frames (frames transformed).
 const TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL = 500;
+const RATE_DROP_TO_PRECENT = 0.8 //80%
 
 class InternalTransformer extends Emittery<EventDataMap> implements Transformer {
   uuid_: string;
@@ -134,7 +147,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
           .variation('Error')
           .build();
         Reporter.report(report);
-        let msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, position: 'start'}
+        const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'start'}
         this.emit('error', msg)
       }
     }
@@ -164,7 +177,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
             .variation('Error')
             .build();
           Reporter.report(report);
-          let msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, position: 'transform'}
+          const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'transform'}
           this.emit('error', msg)
         }
       }else{
@@ -189,7 +202,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
           .variation('Error')
           .build();
         Reporter.report(error);
-        let msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, position: 'flush'}
+        const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'flush'}
         this.emit('error', msg)
       }
     }
@@ -212,9 +225,8 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
     let timeElapsed_s = ((Date.now() - this.mediaTransformerQosReportStartTimestamp_) / 1000);
     let fps: number = this.framesFromSource_ / timeElapsed_s;
     let transformedFps: number = this.framesTransformed_ / timeElapsed_s;
-    console.log(fps, transformedFps, this.trackExpectedRate_);
-    if(this.trackExpectedRate_ != -1 && this.trackExpectedRate_ * 0.8 > fps){
-      let msg: WarnData = {eventMetaData: {transformerIndex: this.index_}, warningType: WarningType.FPS_DROP, dropInfo: {requested: this.trackExpectedRate_, current: fps}}
+    if(this.trackExpectedRate_ != -1 && this.trackExpectedRate_ * RATE_DROP_TO_PRECENT > fps){
+      const msg: WarnData = {eventMetaData: {transformerIndex: this.index_}, warningType: WarningType.FPS_DROP, dropInfo: {requested: this.trackExpectedRate_, current: fps}}
       this.emit('warn', msg)
     }
     const qos: Report = new ReportBuilder()

@@ -7,6 +7,7 @@ import Emittery from 'emittery'
 
 /**
  * Media processor class holding and running the media processing logic.
+ * The class implements an async event emitter pattern
  *
  * @example
  *
@@ -16,7 +17,7 @@ import Emittery from 'emittery'
  *   transformers.push(new CanvasTransform());
  *   mediaProcessor.setTransformers(transformers);
  *   mediaProcessor.on('error',(ErrorData => {}))
- *   mediaProcessor.on('error',(WarnData => {}))
+ *   mediaProcessor.on('warn',(WarnData => {}))
  * ```
  */
 class MediaProcessor extends Emittery<EventDataMap> {
@@ -60,15 +61,15 @@ class MediaProcessor extends Emittery<EventDataMap> {
   }
 
   /**
-   * sets the expected rate of the track per second
-   * the media processor will use this number for calculating drops in the rate.
-   * this could happen when transform will take more time then expected.
-   * this will not cause an error just warning to the client.
-   * mostly:
-   * video: 30 frames per second
-   * audio: 50 audio data per second for OPUS
-   * @param trackExpectedRate
-   */
+  * Sets the expected rate of the track per second.
+  * The media processor will use this number for calculating drops in the rate.
+  * This could happen when the transformation will take more time than expected.
+  * This will not cause an error, just warning to the client.
+  * Mostly:
+  * Video: 30 frames per second
+  * Audio: 50 audio data per second for OPUS
+  * @param trackExpectedRate - number holds the predicted track rate.
+  */
    setTrackExpectedRate(trackExpectedRate: number): void{
     this.trackExpectedRate_ = trackExpectedRate
     if(this.pipeline_){
