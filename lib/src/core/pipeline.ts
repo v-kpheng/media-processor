@@ -40,7 +40,7 @@ class InternalTransformer implements Transformer {
       .guid(this.uuid_)
       .transformerType(this.transformerType_)
       .variation('Create')
-      .build()!;
+      .build();
     Reporter.report(report);
   }
 
@@ -55,7 +55,7 @@ class InternalTransformer implements Transformer {
           .message(Key.errors['transformer_start'])
           .transformerType(this.transformerType_)
           .variation('Error')
-          .build()!;
+          .build();
         Reporter.report(report);
       }
     }
@@ -83,7 +83,7 @@ class InternalTransformer implements Transformer {
             .message(Key.errors['transformer_transform'])
             .transformerType(this.transformerType_)
             .variation('Error')
-            .build()!;
+            .build();
           Reporter.report(report);
         }
       }else{
@@ -106,7 +106,7 @@ class InternalTransformer implements Transformer {
           .message(Key.errors['transformer_transform'])
           .transformerType(this.transformerType_)
           .variation('Error')
-          .build()!;
+          .build();
         Reporter.report(error);
       }
     }
@@ -116,7 +116,7 @@ class InternalTransformer implements Transformer {
       .guid(this.uuid_)
       .transformerType(this.transformerType_)
       .variation('Delete')
-      .build()!;
+      .build();
     Reporter.report(deleteReport);
   }
 
@@ -139,7 +139,7 @@ class InternalTransformer implements Transformer {
       .videoHeight(this.videoHeight_)
       .videoWidth(this.videoWidth_)
       .variation('QoS')
-      .build()!;
+      .build();
     Reporter.report(qos);
     this.mediaTransformerQosReportStartTimestamp_ = 0;
     this.framesFromSource_ = 0;

@@ -136,10 +136,7 @@ class ReportBuilder {
     return this;
   }
 
-  build(): Report | undefined{
-    if(typeof getMetadata() === 'undefined'){
-      return undefined
-    }
+  build(): Report{
     return this._report
   }
 }
