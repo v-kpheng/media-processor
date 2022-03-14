@@ -103,7 +103,7 @@ class InternalTransformer implements Transformer {
         const error: Report = new ReportBuilder()
           .action('MediaTransformer')
           .guid(this.uuid_)
-          .message(Key.errors['transformer_transform'])
+          .message(Key.errors['transformer_flush'])
           .transformerType(this.transformerType_)
           .variation('Error')
           .build();
