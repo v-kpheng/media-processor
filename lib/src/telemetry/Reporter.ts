@@ -18,13 +18,13 @@ export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice'
     appId: string
 }
 
-let _metadata: VonageMetadata | undefined;
+let _metadata: VonageMetadata;
 
 /**
  * Sets some metadata for telemetry.
  *
  * @param metadata  Specifies the addional information being sent with the telemetry collected by the library.
- *                  if MetaData is undefined (or not set) the package will not set the telemetry. (better to send for debug reasons)
+ *                  If MetaData is undefined (or not set) the package will not set the telemetry. (better to send for debug reasons)
  *
  * @example
  *
@@ -36,12 +36,12 @@ let _metadata: VonageMetadata | undefined;
  *   setMetadata(metadata);
  * ```
  */
-export function setMetadata(metadata?: VonageMetadata): void {
+export function setMetadata(metadata: VonageMetadata): void {
   _metadata = metadata;
 }
 
 function getMetadata(): VonageMetadata{
-  return _metadata!;
+  return _metadata;
 }
 
 interface Report {
@@ -66,7 +66,7 @@ class ReportBuilder {
   private readonly _report: Report;
 
   constructor() {
-    const metadata: VonageMetadata = getMetadata()!;
+    const metadata: VonageMetadata = getMetadata();
     this._report = {
       action: Optional.empty<string>(),
       applicationId: Optional.ofNullable((metadata !== undefined) ? metadata.appId : null),
@@ -151,9 +151,9 @@ const serializeReport = (report: Report): string => {
 }
 
 class Reporter {
-    static report(report?: Report): Promise<any>{
+    static report(report: Report): Promise<any>{
         return new Promise<any>((resolve, reject) => {
-          if(typeof report === 'undefined'){
+          if(typeof report.applicationId === 'undefined' || typeof report.source === 'undefined'){
             resolve('success')
             return
           }
