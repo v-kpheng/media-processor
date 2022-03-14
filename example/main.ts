@@ -18,6 +18,7 @@ async function main() {
   const sourceSelector: any =document.getElementById('sourceSelector');
   const testruntimeSelector: any = document.getElementById('testruntime');
   const tranfromersCountSelector: any = document.getElementById('trasformersCount');
+  const switchSourceSelector: any = document.getElementById('switchSource')
   
   let source_: any;
   async function updatePipelineSource() {
@@ -116,6 +117,12 @@ async function main() {
     //use this lines as they are now
     let connector: MediaProcessorConnector = new MediaProcessorConnector(mediaProcessor);
     source_.setMediaProcessorConnector(connector);
+
+    switchSourceSelector.onclick = function(input: any){
+      if(typeof source_.isSwitchSupported === 'function' && source_.isSwitchSupported()){
+        source_.setMediaProcessorConnector(connector);
+      }
+    }
 
     document.title = testName + `_${testruntimeType}`
     if(testruntimeType != 0){
