@@ -43,7 +43,7 @@ class MediaProcessor {
       .action('MediaProcessor')
       .guid(this.uuid_)
       .variation('Create')
-      .build();
+      .build()!;
     Reporter.report(report);
   }
 
@@ -73,7 +73,7 @@ class MediaProcessor {
           .guid(this.uuid_)
           .message(Key.errors['transformer_none'])
           .variation('Error')
-          .build();
+          .build()!;
         Reporter.report(report);
         reject('[MediaProcessor] Need to set transformers.')
       }
@@ -103,7 +103,7 @@ class MediaProcessor {
       .guid(this.uuid_)
       .message(Key.updates['transformer_new'])
       .variation('Update')
-      .build();
+      .build()!;
     Reporter.report(report);
     this.transformers_ = transformers
     if (this.readable_ && this.writable_) {
@@ -124,7 +124,7 @@ class MediaProcessor {
         .action('MediaProcessor')
         .guid(this.uuid_)
         .variation('Delete')
-        .build();
+        .build()!;
       Reporter.report(report);
       resolve()
     })

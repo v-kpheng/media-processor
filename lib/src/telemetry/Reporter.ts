@@ -18,12 +18,13 @@ export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice'
     appId: string
 }
 
-let _metadata: VonageMetadata;
+let _metadata: VonageMetadata | undefined;
 
 /**
  * Sets some metadata for telemetry.
  *
- * @param metadata Specifies the addional information being sent with the telemetry collected by the library.
+ * @param metadata  Specifies the addional information being sent with the telemetry collected by the library.
+ *                  if MetaData is undefined (or not set) the package will not set the telemetry. (better to send for debug reasons)
  *
  * @example
  *
@@ -35,12 +36,12 @@ let _metadata: VonageMetadata;
  *   setMetadata(metadata);
  * ```
  */
-export function setMetadata(metadata: VonageMetadata): void {
+export function setMetadata(metadata?: VonageMetadata): void {
   _metadata = metadata;
 }
 
-function getMetadata(): VonageMetadata {
-  return _metadata;
+function getMetadata(): VonageMetadata{
+  return _metadata!;
 }
 
 interface Report {
@@ -65,7 +66,7 @@ class ReportBuilder {
   private readonly _report: Report;
 
   constructor() {
-    const metadata: VonageMetadata = getMetadata();
+    const metadata: VonageMetadata = getMetadata()!;
     this._report = {
       action: Optional.empty<string>(),
       applicationId: Optional.ofNullable((metadata !== undefined) ? metadata.appId : null),
@@ -135,8 +136,11 @@ class ReportBuilder {
     return this;
   }
 
-  build(): Report {
-    return this._report;
+  build(): Report | undefined{
+    if(typeof getMetadata() === 'undefined'){
+      return undefined
+    }
+    return this._report
   }
 }
 
@@ -147,28 +151,32 @@ const serializeReport = (report: Report): string => {
 }
 
 class Reporter {
-    static report(report: Report): Promise<any>{
+    static report(report?: Report): Promise<any>{
         return new Promise<any>((resolve, reject) => {
-            let axiosInstance: AxiosInstance = axios.create()
-            let config: AxiosRequestConfig = {
-                timeout: 10000,
-                timeoutErrorMessage: "Request timeout",
-                headers: {
-                     'Content-Type': 'application/json'
-                }
-            }
-            // @ts-ignore
-            const telemetryServerUrl: string = import.meta.env.VITE_TELEMETRY_SERVER_URL ?? 'https://hlg.tokbox.com/prod/logging/vcp_webrtc';
-            axiosInstance.post(telemetryServerUrl, serializeReport(report), config)
-            .then((res: AxiosResponse) => {
-                console.log(res);
-                resolve('success')
-            })
-            .catch(e => {
-                console.log(e);
-                reject(e)
-            })
-        });
+          if(typeof report === 'undefined'){
+            resolve('success')
+            return
+          }
+          let axiosInstance: AxiosInstance = axios.create()
+          let config: AxiosRequestConfig = {
+              timeout: 10000,
+              timeoutErrorMessage: "Request timeout",
+              headers: {
+                    'Content-Type': 'application/json'
+              }
+          }
+          // @ts-ignore
+          const telemetryServerUrl: string = import.meta.env.VITE_TELEMETRY_SERVER_URL ?? 'https://hlg.tokbox.com/prod/logging/vcp_webrtc';
+          axiosInstance.post(telemetryServerUrl, serializeReport(report), config)
+          .then((res: AxiosResponse) => {
+              console.log(res);
+              resolve('success')
+          })
+          .catch(e => {
+              console.log(e);
+              reject(e)
+          })
+      });
     }
 }
 
