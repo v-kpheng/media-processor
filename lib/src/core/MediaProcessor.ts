@@ -1,7 +1,9 @@
-import Pipeline from './pipeline'
+import Pipeline, { EventDataMap } from './pipeline'
 import { Key } from '../telemetry/Key'
 import { Report, ReportBuilder, Reporter } from '../telemetry/Reporter';
 import { v4 as uuid } from 'uuid';
+import Emittery from 'emittery'
+
 
 /**
  * Media processor class holding and running the media processing logic.
@@ -13,9 +15,11 @@ import { v4 as uuid } from 'uuid';
  *   let transformers: Array<Transformer> = [];
  *   transformers.push(new CanvasTransform());
  *   mediaProcessor.setTransformers(transformers);
+ *   mediaProcessor.on('error',(ErrorData => {}))
+ *   mediaProcessor.on('error',(WarnData => {}))
  * ```
  */
-class MediaProcessor {
+class MediaProcessor extends Emittery<EventDataMap> {
   /**
    * @private
    */
@@ -37,14 +41,39 @@ class MediaProcessor {
    */
    writable_!: WritableStream;
 
+  /**
+   * @private
+   */
+   trackExpectedRate_: number
+ 
+
   constructor () {
+    super()
     this.uuid_ = uuid();
+    this.trackExpectedRate_ = -1
     const report: Report = new ReportBuilder()
       .action('MediaProcessor')
       .guid(this.uuid_)
       .variation('Create')
       .build();
     Reporter.report(report);
+  }
+
+  /**
+   * sets the expected rate of the track per second
+   * the media processor will use this number for calculating drops in the rate.
+   * this could happen when transform will take more time then expected.
+   * this will not cause an error just warning to the client.
+   * mostly:
+   * video: 30 frames per second
+   * audio: 50 audio data per second for OPUS
+   * @param trackExpectedRate
+   */
+   setTrackExpectedRate(trackExpectedRate: number): void{
+    this.trackExpectedRate_ = trackExpectedRate
+    if(this.pipeline_){
+      this.pipeline_.setTrackExpectedRate(this.trackExpectedRate_)
+    }
   }
 
   /**
@@ -83,6 +112,17 @@ class MediaProcessor {
       }
 
       this.pipeline_ = new Pipeline(this.transformers_)
+      this.pipeline_.on('warn', ( eventData => {
+        this.emit('warn', eventData)
+      }))
+      this.pipeline_.on('error', ( eventData => {
+        this.emit('error', eventData)
+      }))
+
+      if(this.trackExpectedRate_ != -1){
+        this.pipeline_.setTrackExpectedRate(this.trackExpectedRate_);
+      }
+      
       this.pipeline_.start(this.readable_, this.writable_).then(() => {
         resolve()
       })
