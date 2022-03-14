@@ -23,7 +23,8 @@ let _metadata: VonageMetadata;
 /**
  * Sets some metadata for telemetry.
  *
- * @param metadata Specifies the addional information being sent with the telemetry collected by the library.
+ * @param metadata  Specifies the addional information being sent with the telemetry collected by the library.
+ *                  If metadata is either undefined or not set the library will not collect/send any telemetry.
  *
  * @example
  *
@@ -39,7 +40,7 @@ export function setMetadata(metadata: VonageMetadata): void {
   _metadata = metadata;
 }
 
-function getMetadata(): VonageMetadata {
+function getMetadata(): VonageMetadata{
   return _metadata;
 }
 
@@ -59,6 +60,7 @@ interface Report {
   videoHeight: Optional<number>;
   videoWidth: Optional<number>;
   version: string;
+  error: Optional<string>;
 }
 
 class ReportBuilder {
@@ -81,7 +83,8 @@ class ReportBuilder {
       variation: Optional.empty<string>(),
       videoHeight: Optional.empty<number>(),
       videoWidth: Optional.empty<number>(),
-      version: version
+      version: version,
+      error: Optional.empty<string>()
     };
   }
 
@@ -135,8 +138,13 @@ class ReportBuilder {
     return this;
   }
 
-  build(): Report {
-    return this._report;
+  error(error: string){
+    this._report.error = Optional.ofNullable(error)
+    return this
+  }
+
+  build(): Report{
+    return this._report
   }
 }
 
@@ -149,26 +157,30 @@ const serializeReport = (report: Report): string => {
 class Reporter {
     static report(report: Report): Promise<any>{
         return new Promise<any>((resolve, reject) => {
-            let axiosInstance: AxiosInstance = axios.create()
-            let config: AxiosRequestConfig = {
-                timeout: 10000,
-                timeoutErrorMessage: "Request timeout",
-                headers: {
-                     'Content-Type': 'application/json'
-                }
-            }
-            // @ts-ignore
-            const telemetryServerUrl: string = import.meta.env.VITE_TELEMETRY_SERVER_URL ?? 'https://hlg.tokbox.com/prod/logging/vcp_webrtc';
-            axiosInstance.post(telemetryServerUrl, serializeReport(report), config)
-            .then((res: AxiosResponse) => {
-                console.log(res);
-                resolve('success')
-            })
-            .catch(e => {
-                console.log(e);
-                reject(e)
-            })
-        });
+          if(report.applicationId === null || report.source === null){
+            resolve('success')
+            return
+          }
+          let axiosInstance: AxiosInstance = axios.create()
+          let config: AxiosRequestConfig = {
+              timeout: 10000,
+              timeoutErrorMessage: "Request timeout",
+              headers: {
+                    'Content-Type': 'application/json'
+              }
+          }
+          // @ts-ignore
+          const telemetryServerUrl: string = import.meta.env.VITE_TELEMETRY_SERVER_URL ?? 'https://hlg.tokbox.com/prod/logging/vcp_webrtc';
+          axiosInstance.post(telemetryServerUrl, serializeReport(report), config)
+          .then((res: AxiosResponse) => {
+              console.log(res);
+              resolve('success')
+          })
+          .catch(e => {
+              console.log(e);
+              reject(e)
+          })
+      });
     }
 }
 
