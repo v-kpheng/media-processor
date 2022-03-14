@@ -60,6 +60,7 @@ interface Report {
   videoHeight: Optional<number>;
   videoWidth: Optional<number>;
   version: string;
+  error: Optional<string>;
 }
 
 class ReportBuilder {
@@ -82,7 +83,8 @@ class ReportBuilder {
       variation: Optional.empty<string>(),
       videoHeight: Optional.empty<number>(),
       videoWidth: Optional.empty<number>(),
-      version: version
+      version: version,
+      error: Optional.empty<string>()
     };
   }
 
@@ -134,6 +136,11 @@ class ReportBuilder {
   videoWidth(videoWidth: number) {
     this._report.videoWidth = Optional.ofNullable(videoWidth);
     return this;
+  }
+
+  error(error: string){
+    this._report.error = Optional.ofNullable(error)
+    return this
   }
 
   build(): Report{
