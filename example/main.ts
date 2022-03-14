@@ -1,6 +1,7 @@
 import CameraSource from './js/camera-source';
 import CanvasTransform from './js/canvas-transform';
 import { isSupported, MediaProcessor, MediaProcessorConnector, setMetadata, VonageMetadata } from '../lib/main';
+import EmptyTransformer from './js/empty-transform';
 
 async function main() {
   try {
@@ -31,9 +32,18 @@ async function main() {
     };
     setMetadata(metadata);
     let mediaProcessor: MediaProcessor = new MediaProcessor();
+    
+    mediaProcessor.on('error', (eventData => {
+      console.error(eventData);
+    }))
+    mediaProcessor.on('warn', (eventData => {
+      console.warn(eventData);
+    }))
+
     let transformers: Array<Transformer> = [];
     transformers.push(new CanvasTransform());
     mediaProcessor.setTransformers(transformers);
+    mediaProcessor.setTrackExpectedRate(source_.getMaxFrameRate())
 
     let connector: MediaProcessorConnector = new MediaProcessorConnector(mediaProcessor);
     source_.setMediaProcessorConnector(connector);
