@@ -2,6 +2,7 @@ import { Key } from '../telemetry/Key';
 import { Report, ReportBuilder, Reporter } from '../telemetry/Reporter';
 import { v4 as uuid } from 'uuid';
 import Emittery from 'emittery'
+import { getErrorMessage } from '../utils/Tools';
 
 /**
  * WarningType specifies the type of warning from the transformer
@@ -145,6 +146,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
           .message(Key.errors['transformer_start'])
           .transformerType(this.transformerType_)
           .variation('Error')
+          .error(getErrorMessage(e))
           .build();
         Reporter.report(report);
         const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'start'}
@@ -175,6 +177,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
             .message(Key.errors['transformer_transform'])
             .transformerType(this.transformerType_)
             .variation('Error')
+            .error(getErrorMessage(e))
             .build();
           Reporter.report(report);
           const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'transform'}
@@ -200,6 +203,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
           .message(Key.errors['transformer_flush'])
           .transformerType(this.transformerType_)
           .variation('Error')
+          .error(getErrorMessage(e))
           .build();
         Reporter.report(error);
         const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'flush'}
