@@ -2,7 +2,7 @@ import { Key } from '../telemetry/Key';
 import { Report, ReportBuilder, Reporter } from '../telemetry/Reporter';
 import { v4 as uuid } from 'uuid';
 import Emittery from 'emittery'
-import { getErrorMessage } from './Tools';
+import { getErrorMessage } from '../utils/Tools';
 
 /**
  * WarningType specifies the type of warning from the transformer
