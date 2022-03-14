@@ -150,7 +150,7 @@ const serializeReport = (report: Report): string => {
 class Reporter {
     static report(report: Report): Promise<any>{
         return new Promise<any>((resolve, reject) => {
-          if(typeof report.applicationId === 'undefined' || typeof report.source === 'undefined'){
+          if(report.applicationId === null || report.source === null){
             resolve('success')
             return
           }
