@@ -24,7 +24,7 @@ let _metadata: VonageMetadata;
  * Sets some metadata for telemetry.
  *
  * @param metadata  Specifies the addional information being sent with the telemetry collected by the library.
- *                  If MetaData is undefined (or not set) the package will not set the telemetry. (better to send for debug reasons)
+ *                  If metadata is either undefined or not set the library will not collect/send any telemetry.
  *
  * @example
  *
