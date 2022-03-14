@@ -1,11 +1,92 @@
 import { Key } from '../telemetry/Key';
 import { Report, ReportBuilder, Reporter } from '../telemetry/Reporter';
 import { v4 as uuid } from 'uuid';
+import Emittery from 'emittery'
+
+/**
+ * WarningType specifies the type of warning from the transformer
+ */
+export enum WarningType {
+  /**
+   * Warning about change in process rate
+   */
+  FPS_DROP = 'fps_drop'
+}
+
+/**
+ * DropInfo gives info about the frame rate of the transformer
+ */
+export type DropInfo = {
+  /**
+   * The rate predicted rate of the track
+   */
+  requested: number
+  /**
+   * The actual rate of the track
+   */
+  current: number
+}
+
+/**
+ * ErrorFunction specifies the function which the error (exception) happened
+ */
+export type ErrorFunction = 'start' | 'transform' | 'flush'
+
+/**
+ * EventMetaData the meta data of the event.
+ */
+export type EventMetaData = {
+  /**
+   * The transformer index in the array of transformers.
+   */
+  transformerIndex: number
+};
+
+/**
+ * WarnData the warning data type
+ * ```ts
+ *  {
+ *    eventMetaData: { transformerIndex: 0},
+ *    warningType: WarningType.FPS_DROP
+ *    dropInfo: {requested: 30, current:20}
+ *  }
+ * ```
+ */
+export type WarnData = {
+  eventMetaData: EventMetaData
+  warningType: WarningType
+  dropInfo: DropInfo
+}
+
+/**
+ * ErrorData the error data type
+ * ```ts
+ *  {
+ *    eventMetaData: { transformerIndex: 0},
+ *    ErrorData: 'start',
+ *    error: e (the exception in the catch)
+ *  }
+ * ```
+ */
+export type ErrorData = {
+  eventMetaData: EventMetaData
+  function: ErrorFunction
+  error: unknown
+}
+
+/**
+ * EventDataMap the options of event data
+ */
+export type EventDataMap = {
+	warn: WarnData
+	error: ErrorData
+};
 
 // Note: TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL is expresed in frames (frames transformed).
 const TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL = 500;
+const RATE_DROP_TO_PRECENT = 0.8 //80%
 
-class InternalTransformer implements Transformer {
+class InternalTransformer extends Emittery<EventDataMap> implements Transformer {
   uuid_: string;
   transformerType_: string;
   fps_: number;
@@ -17,8 +98,12 @@ class InternalTransformer implements Transformer {
   mediaTransformerQosReportStartTimestamp_: number;
   videoHeight_: number;
   videoWidth_: number;
+  trackExpectedRate_: number
+  index_:number
 
-  constructor(transformer: Transformer){
+  constructor(transformer: Transformer, index: number){
+    super()
+    this.index_ = index
     this.uuid_ = uuid();
     this.framesTransformed_ = 0;
     this.transformer_ = transformer;
@@ -29,6 +114,7 @@ class InternalTransformer implements Transformer {
     this.mediaTransformerQosReportStartTimestamp_ = 0;
     this.videoHeight_ = 0;
     this.videoWidth_ = 0;
+    this.trackExpectedRate_ = -1
 
     this.transformerType_ = 'Custom';
     if ('getTransformerType' in transformer) {
@@ -44,6 +130,10 @@ class InternalTransformer implements Transformer {
     Reporter.report(report);
   }
 
+  setTrackExpectedRate(trackExpectedRate: number): void{
+    this.trackExpectedRate_ = trackExpectedRate
+  }
+
   async start(controller:TransformStreamDefaultController){
     if(this.transformer_ && typeof(this.transformer_.start) === "function"){
       try {
@@ -57,6 +147,8 @@ class InternalTransformer implements Transformer {
           .variation('Error')
           .build();
         Reporter.report(report);
+        const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'start'}
+        this.emit('error', msg)
       }
     }
   }
@@ -85,6 +177,8 @@ class InternalTransformer implements Transformer {
             .variation('Error')
             .build();
           Reporter.report(report);
+          const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'transform'}
+          this.emit('error', msg)
         }
       }else{
         frame.close()
@@ -103,11 +197,13 @@ class InternalTransformer implements Transformer {
         const error: Report = new ReportBuilder()
           .action('MediaTransformer')
           .guid(this.uuid_)
-          .message(Key.errors['transformer_transform'])
+          .message(Key.errors['transformer_flush'])
           .transformerType(this.transformerType_)
           .variation('Error')
           .build();
         Reporter.report(error);
+        const msg: ErrorData = {eventMetaData: {transformerIndex: this.index_}, error: e, function: 'flush'}
+        this.emit('error', msg)
       }
     }
     this.mediaTransformerQosReport();
@@ -129,6 +225,10 @@ class InternalTransformer implements Transformer {
     let timeElapsed_s = ((Date.now() - this.mediaTransformerQosReportStartTimestamp_) / 1000);
     let fps: number = this.framesFromSource_ / timeElapsed_s;
     let transformedFps: number = this.framesTransformed_ / timeElapsed_s;
+    if(this.trackExpectedRate_ != -1 && this.trackExpectedRate_ * RATE_DROP_TO_PRECENT > fps){
+      const msg: WarnData = {eventMetaData: {transformerIndex: this.index_}, warningType: WarningType.FPS_DROP, dropInfo: {requested: this.trackExpectedRate_, current: fps}}
+      this.emit('warn', msg)
+    }
     const qos: Report = new ReportBuilder()
       .action('MediaTransformer')
       .fps(fps)
@@ -147,12 +247,30 @@ class InternalTransformer implements Transformer {
   }
 }
 
-class Pipeline {
+class Pipeline extends Emittery<EventDataMap>{
   transformers_: Array<InternalTransformer>
+  trackExpectedRate_: number;
+
   constructor(transformers: Array<Transformer>) {
+    super()
     this.transformers_ = [];
-    for(let transformer of transformers){
-      this.transformers_.push(new InternalTransformer(transformer))
+    this.trackExpectedRate_ = -1
+    for(let index: number = 0; index < transformers.length; index++){
+      let internalTransformer: InternalTransformer = new InternalTransformer(transformers[index], index)
+      internalTransformer.on('error',(eventData => {
+        this.emit('error', eventData)
+      }))
+      internalTransformer.on('warn', (eventData => {
+        this.emit('warn', eventData)
+      }))
+      this.transformers_.push(internalTransformer)
+    }
+  }
+
+  setTrackExpectedRate(trackExpectedRate: number): void {
+    this.trackExpectedRate_ = trackExpectedRate
+    for(let transformer of this.transformers_){
+      transformer.setTrackExpectedRate(this.trackExpectedRate_)
     }
   }
 
