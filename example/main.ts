@@ -2,9 +2,11 @@ import CameraSource from './js/camera-source';
 import CanvasTransform from './js/canvas-transform';
 import EmptyTransformer from './js/empty-transform';
 import TextTransformer from './js/text-transform';
-
 import { isSupported, MediaProcessor, MediaProcessorConnector, setMetadata, VonageMetadata } from '../lib/main';
 import ImageSource from './js/image-source';
+import StartTransformer from './js/start-error-transformer';
+import TransformTransformer from './js/transform-error-transformer';
+import FlushTransformer from './js/flush-error-transformer';
 
 async function main() {
   try {
@@ -116,9 +118,17 @@ async function main() {
       transformers.push(new CanvasTransform());
       transformers.push(new EmptyTransformer());
     }
-
     if(trasformersCountType === "16"){
       transformers.push();
+    }
+    if(trasformersCountType === "17"){
+      transformers.push(new StartTransformer());
+    }
+    if(trasformersCountType === "18"){
+      transformers.push(new TransformTransformer());
+    }
+    if(trasformersCountType === "19"){
+      transformers.push(new FlushTransformer());
     }
 
     mediaProcessor.setTransformers(transformers);

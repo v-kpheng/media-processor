@@ -66,10 +66,12 @@ Cypress.Commands.add('configAndRun', (variation, time, transformers_count) => {
     })
     cy.wait(33000)
     cy.get('#outputVideoContainer > .video').then(($output) => {
-        cy.get($output).matchImageSnapshot('source');
+        cy.wait(100)
+        cy.get($output).matchImageSnapshot('source'); // test after we destroy the transformer it matches the source image 
     })
     cy.wait(3000)
-// check all telemetries were sent 
+
+// check the correct telemetries were sent 
     if (transformers_count === '1'){
         cy.get('@create.all').should('have.length', 2)
         cy.get('@update.all').should('have.length', 1)
