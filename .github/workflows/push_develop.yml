@@ -12,16 +12,28 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v2
+      - name: Check SkipPublish label
+        id: check_skip_publish_label
+        uses: shioyang/check-pr-labels-on-push-action@v1.0.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          labels: '["SkipPublish"]'
       # Setup .npmrc file to publish to Github
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
-      - run: |
+      - name: npm ci
+        run: |
+          NPM_PUBLISH_DRY_RUN=${{ steps.check_skip_publish_label.outputs.result }}
           npm ci
           npm run build:dev
           npm run doc
-          npm publish
+          if [ "$NPM_PUBLISH_DRY_RUN" == "true" ]; then
+            npm publish --dry-run
+          else
+            npm publish
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy documentation to Github Pages
