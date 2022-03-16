@@ -42,6 +42,15 @@ async function main() {
     };
     setMetadata(metadata);
     let mediaProcessor: MediaProcessor = new MediaProcessor();
+    
+    mediaProcessor.on('error', (eventData => {
+      console.error(eventData);
+    }))
+ 
+    mediaProcessor.on('warn', (eventData => {
+      console.warn(eventData);
+    }))
+
     let transformers: Array<Transformer> = [];
 
     if(trasformersCountType === "1"){

@@ -24,6 +24,10 @@ class CameraSource {
     this.videoMirrorHelper_.setStream(this.stream_);
   }
 
+  getMaxFrameRate():number{
+    return this.videoTrack_.getCapabilities().frameRate.max
+  }
+
   setMediaProcessorConnector(mediaProcessorConnector: MediaProcessorConnectorInterface): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       this.mediaProcessorConnector_ = mediaProcessorConnector;
