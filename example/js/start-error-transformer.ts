@@ -7,7 +7,7 @@ class StartTransformer implements Transformer {
     }
   
     async start(controller:TransformStreamDefaultController) {
-        throw new Error('Cannot start transformer');
+        throw('Cannot start transformer');
           }
     
     transform(frame:any, controller:TransformStreamDefaultController) {

@@ -18,8 +18,8 @@ class TransformTransformer implements Transformer {
   
     transform(frame:any, controller:TransformStreamDefaultController) {
       this.counter_++;
-      if (this.counter_ % 100 === 0){
-        throw new Error('Cannot transform frame');
+      if (this.counter_ % 100 == 0){
+        throw('Cannot transform frame');
       }
       this.startCanvas_.width = frame.displayWidth
       this.startCanvas_.height = frame.displayHeight

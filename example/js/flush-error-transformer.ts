@@ -28,7 +28,7 @@ class FlushTransformer implements Transformer {
     }
   
     flush(controller:TransformStreamDefaultController) {
-        throw new Error('Cannot flush transformer');
+        throw('Cannot flush transformer');
     }
   }
   
