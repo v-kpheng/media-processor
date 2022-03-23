@@ -1,3 +1,5 @@
+// import {MediaProcessor} from '../../lib/main.ts';
+
 describe('error testing for media proccessor', () => {
 
     beforeEach(() => {
@@ -46,4 +48,21 @@ describe('error testing for media proccessor', () => {
         cy.get('@consoleError').should('be.calledWith','Cannot flush transformer');
     })
 
+    // test setTrackExpectedRate 
+    it('setTrackExpectedRate within range', () => {
+        cy.get('#rate').clear().type('25')
+        cy.configTest('1', '30');
+        cy.wait(33000);
+    })
+    it('setTrackExpectedRate above range', () => {
+        cy.get('#rate').clear().type('50')
+        cy.configTest('1', '30');
+        cy.wait(33000);
+        
+    })
+    it('setTrackExpectedRate isnt called', () => {
+        cy.get('#rate').should('have.value', '-1') 
+        cy.configTest('1', '30');
+        cy.wait(33000);
+    })
 })

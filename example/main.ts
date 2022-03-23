@@ -21,12 +21,14 @@ async function main() {
   const testruntimeSelector: any = document.getElementById('testruntime');
   const tranfromersCountSelector: any = document.getElementById('trasformersCount');
   const switchSourceSelector: any = document.getElementById('switchSource')
-  
+  const expectedRateSelector: any = document.getElementById('rate')
+
   let source_: any;
   async function updatePipelineSource() {
     const sourceType = sourceSelector.options[sourceSelector.selectedIndex].value;
     const testruntimeType = testruntimeSelector.options[testruntimeSelector.selectedIndex].value;
     const trasformersCountType = tranfromersCountSelector.options[tranfromersCountSelector.selectedIndex].value;
+    const expectedRateType = expectedRateSelector.value;
 
     if(sourceType === 'stop'){
       await source_.stopMediaProcessorConnector()
@@ -34,7 +36,7 @@ async function main() {
     } else if(sourceType === 'camera'){
       source_ = new CameraSource()
     }else if(sourceType === 'image'){
-      source_ = new ImageSource()
+      source_ = new ImageSource() 
     }
     await source_.init()
     const testName: string = "db_canvas_test";
@@ -53,6 +55,9 @@ async function main() {
       console.warn(eventData);
     }))
 
+    if(expectedRateType != "-1"){
+      mediaProcessor.setTrackExpectedRate(parseInt(expectedRateType));
+    }
     let transformers: Array<Transformer> = [];
 
     if(trasformersCountType === "1"){

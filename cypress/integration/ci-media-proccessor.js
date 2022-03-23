@@ -16,6 +16,8 @@ describe('CI for media proccessor', () => {
         })
     })
 
+//pushing 1 transformer 
+
     it('Canvas Transformer Only', () => {
         cy.telemetryIntercept();
         cy.configTest('1', '30');
@@ -40,6 +42,7 @@ describe('CI for media proccessor', () => {
         cy.get('@consoleLog').should('be.calledWith', 'text transformer flush');
 
     })
+//pushing 2 transformers 
 
     it('Canvas -> Empty Transformers', () => {
         cy.telemetryIntercept();
@@ -89,6 +92,8 @@ describe('CI for media proccessor', () => {
         cy.get('@consoleLog').should('be.calledWith', 'empty transformer flush').and('be.calledWith', 'text transformer flush');
     })
 
+//pushing 3 transformers 
+
     it('Canvas -> Empty -> Text Transformers', () => {
         cy.telemetryIntercept();
         cy.configTest('10', '30');
@@ -136,6 +141,8 @@ describe('CI for media proccessor', () => {
         cy.telemetryCheck('3');
         cy.get('@consoleLog').should('be.calledWith', 'canvas transformer flush').and('be.calledWith', 'text transformer flush').and('be.calledWith', 'empty transformer flush');
     })
+
+//switching the source 
 
     it('switch source with 1 transformer', () => {
         cy.configTest('1', '30');
