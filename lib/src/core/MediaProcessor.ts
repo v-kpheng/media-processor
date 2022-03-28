@@ -98,7 +98,6 @@ class MediaProcessor extends Emittery<EventDataMap> {
   transformInternal (): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.transformers_ || this.transformers_.length === 0) {
-        console.error('No transformers provided');
         const report: Report = new ReportBuilder()
           .action('MediaProcessor')
           .guid(this.uuid_)

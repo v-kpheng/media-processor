@@ -140,7 +140,6 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
       try {
         await this.transformer_.start(controller);
       } catch(e) {
-        console.error(e)
         const report: Report = new ReportBuilder()
           .action('MediaTransformer')
           .guid(this.uuid_)
@@ -172,7 +171,6 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
             this.mediaTransformerQosReport();
           }
         } catch(e) {
-          console.error(e)
           const report: Report = new ReportBuilder()
             .action('MediaTransformer')
             .guid(this.uuid_)
@@ -199,7 +197,6 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
       try {
         await this.transformer_.flush(controller);
       } catch(e) {
-        console.error(e)
         const error: Report = new ReportBuilder()
           .action('MediaTransformer')
           .guid(this.uuid_)

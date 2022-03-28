@@ -2,11 +2,12 @@ import CameraSource from './js/camera-source';
 import CanvasTransform from './js/canvas-transform';
 import EmptyTransformer from './js/empty-transform';
 import TextTransformer from './js/text-transform';
-import { isSupported, MediaProcessor, MediaProcessorConnector, setMetadata, VonageMetadata } from '../lib/main';
+import { isSupported, MediaProcessor, MediaProcessorConnector, setMetadata, VonageMetadata } from '../dist/media-processor.es';
 import ImageSource from './js/image-source';
 import StartTransformer from './js/start-error-transformer';
 import TransformTransformer from './js/transform-error-transformer';
 import FlushTransformer from './js/flush-error-transformer';
+import { ErrorData, WarnData } from '../lib/main';
 
 async function main() {
   try {
@@ -47,12 +48,12 @@ async function main() {
     setMetadata(metadata);
     let mediaProcessor: MediaProcessor = new MediaProcessor();
     
-    mediaProcessor.on('error', (eventData => {
-      console.error(eventData);
+    mediaProcessor.on('error', ((eventData: ErrorData) => {
+      console.error(eventData.error, eventData.eventMetaData.transformerIndex, eventData.function);
     }))
  
-    mediaProcessor.on('warn', (eventData => {
-      console.warn(eventData);
+    mediaProcessor.on('warn', ((eventData: WarnData) => {
+      console.warn(eventData.dropInfo.requested, eventData.eventMetaData.transformerIndex, eventData.warningType);
     }))
 
     if(expectedRateType != "-1"){
@@ -130,9 +131,12 @@ async function main() {
       transformers.push(new StartTransformer());
     }
     if(trasformersCountType === "18"){
+      transformers.push(new CanvasTransform());
       transformers.push(new TransformTransformer());
     }
     if(trasformersCountType === "19"){
+      transformers.push(new EmptyTransformer());
+      transformers.push(new CanvasTransform());
       transformers.push(new FlushTransformer());
     }
 
@@ -140,7 +144,12 @@ async function main() {
 
     //use this lines as they are now
     let connector: MediaProcessorConnector = new MediaProcessorConnector(mediaProcessor);
-    source_.setMediaProcessorConnector(connector);
+    try {
+      await source_.setMediaProcessorConnector(connector);
+    }
+    catch(e){
+      console.error(e)
+    }
 
     switchSourceSelector.onclick = function(input: any){
       if(typeof source_.isSwitchSupported === 'function' && source_.isSwitchSupported()){
