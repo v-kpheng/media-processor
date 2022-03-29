@@ -1,4 +1,11 @@
 name: Cypress Tests
+on:
+  workflow_dispatch:
+    inputs:
+      targer_os:
+        description: 'test'
+        required: false
+        default: 'all'
 
 jobs:
   cypress-run:
