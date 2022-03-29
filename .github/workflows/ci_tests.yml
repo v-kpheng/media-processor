@@ -35,8 +35,10 @@ jobs:
           start: npm run dev 
           wait-on: 'http://localhost:3000'
           browser: chrome
+          record: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
   cypress-run-windows:
     runs-on: media_processor_auto_pr_windows_aws1
     steps:
@@ -56,5 +58,7 @@ jobs:
           start: npm run dev 
           wait-on: 'http://localhost:3000'
           browser: chrome
+          record: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
