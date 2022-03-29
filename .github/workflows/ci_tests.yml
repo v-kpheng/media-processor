@@ -34,6 +34,7 @@ jobs:
           build: npm run build:dev
           start: npm run dev 
           wait-on: 'http://localhost:3000'
+          browser: chrome
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   cypress-run-windows:
@@ -54,5 +55,6 @@ jobs:
           build: npm run build:dev
           start: npm run dev 
           wait-on: 'http://localhost:3000'
+          browser: chrome
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
