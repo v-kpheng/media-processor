@@ -1,0 +1,23 @@
+name: Cypress Tests
+
+jobs:
+  cypress-run:
+    runs-on: media_processor_auto_pr_osx_j
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build:dev
+          start: npm run dev 
+          wait-on: 'http://localhost:3000'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
