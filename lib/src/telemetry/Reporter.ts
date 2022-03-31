@@ -18,9 +18,9 @@ export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice'
     appId: string
 }
 
-
-let _vonageMediaProcessorMetadata: VonageMetadata
-
+declare global {
+  var _vonageMediaProcessorMetadata: VonageMetadata
+}
 
 /**
  * Sets some metadata for telemetry.
@@ -40,11 +40,11 @@ let _vonageMediaProcessorMetadata: VonageMetadata
  * ```
  */
 export function setVonageMetadata(metadata: VonageMetadata): void {
-  _vonageMediaProcessorMetadata = metadata
+  globalThis._vonageMediaProcessorMetadata = metadata
 }
 
 export function getVonageMetadata(): VonageMetadata{
-  return _vonageMediaProcessorMetadata
+  return globalThis._vonageMediaProcessorMetadata
 }
 
 interface Report {
