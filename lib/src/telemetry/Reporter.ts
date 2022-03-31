@@ -70,7 +70,7 @@ class ReportBuilder {
   private readonly _report: Report;
 
   constructor() {
-    const metadata: VonageMetadata = _vonageMediaProcessorMetadata
+    const metadata: VonageMetadata = getVonageMetadata()
     this._report = {
       action: Optional.empty<string>(),
       applicationId: Optional.ofNullable((metadata !== undefined && metadata != null) ? metadata.appId : null),
