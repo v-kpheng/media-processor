@@ -40,7 +40,7 @@ export function setMetadata(metadata: VonageMetadata): void {
   _metadata = metadata;
 }
 
-function getMetadata(): VonageMetadata{
+export function getMetadata(): VonageMetadata{
   return _metadata;
 }
 
