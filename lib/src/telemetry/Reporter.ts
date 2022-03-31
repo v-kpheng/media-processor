@@ -70,14 +70,14 @@ class ReportBuilder {
     const metadata: VonageMetadata = getMetadata();
     this._report = {
       action: Optional.empty<string>(),
-      applicationId: Optional.ofNullable((metadata !== undefined) ? metadata.appId : null),
+      applicationId: Optional.ofNullable((metadata !== undefined && metadata != null) ? metadata.appId : null),
       timestamp: Date.now(),
       fps: Optional.empty<number>(),
       framesTransformed: Optional.empty<number>(),
       guid: Optional.empty<string>(),
       highestFrameTransformCpu: Optional.empty<number>(),
       message: Optional.empty<string>(),
-      source: Optional.ofNullable((metadata !== undefined) ? metadata.sourceType : null),
+      source: Optional.ofNullable((metadata !== undefined && metadata != null) ? metadata.sourceType : null),
       transformedFps: Optional.empty<number>(),
       transformerType: Optional.empty<string>(),
       variation: Optional.empty<string>(),
