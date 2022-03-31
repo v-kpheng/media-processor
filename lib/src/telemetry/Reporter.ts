@@ -157,10 +157,11 @@ const serializeReport = (report: Report): string => {
 class Reporter {
     static report(report: Report): Promise<any>{
         return new Promise<any>((resolve, reject) => {
-          if(report.applicationId === null || report.source === null){
+          if(report.applicationId.isEmpty() || report.source.isEmpty()){
             resolve('success')
             return
           }
+
           let axiosInstance: AxiosInstance = axios.create()
           let config: AxiosRequestConfig = {
               timeout: 10000,
