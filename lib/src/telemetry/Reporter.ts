@@ -18,7 +18,16 @@ export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice'
     appId: string
 }
 
-let _metadata: VonageMetadata;
+
+class MetaVonageDataInfo{
+  static _metadata: VonageMetadata
+  static setMetadata(metadata: VonageMetadata): void {
+    MetaVonageDataInfo._metadata = metadata
+  }
+  static getMetadata():VonageMetadata {
+    return MetaVonageDataInfo._metadata;
+  }
+} 
 
 /**
  * Sets some metadata for telemetry.
@@ -33,15 +42,16 @@ let _metadata: VonageMetadata;
  *     appId: 'vonage-media-processor-example',
  *     sourceType: 'test'
  *   };
- *   setMetadata(metadata);
+ *   setVonageMetadata(metadata);
+ *   let metadataGet: VonageMetadata = getVonageMetadata();
  * ```
  */
-export function setMetadata(metadata: VonageMetadata): void {
-  _metadata = metadata;
+export function setVonageMetadata(metadata: VonageMetadata): void {
+  MetaVonageDataInfo.setMetadata(metadata);
 }
 
-export function getMetadata(): VonageMetadata{
-  return _metadata;
+export function getVonageMetadata(): VonageMetadata{
+  return MetaVonageDataInfo.getMetadata();
 }
 
 interface Report {
@@ -67,7 +77,7 @@ class ReportBuilder {
   private readonly _report: Report;
 
   constructor() {
-    const metadata: VonageMetadata = getMetadata();
+    const metadata: VonageMetadata = MetaVonageDataInfo.getMetadata();
     this._report = {
       action: Optional.empty<string>(),
       applicationId: Optional.ofNullable((metadata !== undefined && metadata != null) ? metadata.appId : null),
