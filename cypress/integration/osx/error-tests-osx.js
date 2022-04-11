@@ -34,7 +34,7 @@ describe('error testing for media proccessor', () => {
         cy.wait(5000);
         cy.wait('@transform_error');
         cy.get('#outputVideoContainer > .video').then(($output) => {
-            cy.get($output).matchImageSnapshot('5'); 
+            cy.get($output).matchImageSnapshot('5_osx'); 
         })
         cy.get('@consoleError').should('be.calledWith',"Cannot transform frame", 1, "transform");
     })
