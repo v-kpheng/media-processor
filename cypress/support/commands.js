@@ -37,17 +37,19 @@ addMatchImageSnapshotCommand({
 
 Cypress.Commands.add('telemetryIntercept', (num) => {
     cy.intercept('POST', "https://hlg.dev.tokbox.com/dev/logging/vcp_webrtc", (req) => {
-        if (req.body.variation.indexOf('Create') > -1){
-            req.alias = "create";
+        if ((req.body.variation.indexOf('Create') > -1) && (req.body.action.indexOf('MediaProcessor') > -1)){
+            req.alias = "MediaProcessorCreate";
+        }else if ((req.body.variation.indexOf('Create') > -1) && (req.body.action.indexOf('MediaTransformer') > -1)){
+            req.alias = "MediaTransformerCreate";
         } else if (req.body.variation.indexOf('Update') > -1) {
-                req.alias = "update";
+                req.alias = "MediaProcessorUpdate";
         } else if (req.body.variation.indexOf('QoS') > -1){
-            req.alias = "qos";
-        } else if (req.body.variation.indexOf('Delete') > -1){
-            req.alias = "delete";
-        } else if (req.body.variation.indexOf('Error') > -1){
-            req.alias = "error";
-        }
+            req.alias = "MediaTransformerQos";
+        } else if ((req.body.variation.indexOf('Delete') > -1) && (req.body.action.indexOf('MediaTransformer') > -1)){
+            req.alias = "MediaTransformerDelete";
+        } else if ((req.body.variation.indexOf('Delete') > -1) && (req.body.action.indexOf('MediaProcessor') > -1)){
+            req.alias = "MediaProcessorDelete";
+        } 
     })
 })
 
@@ -106,19 +108,25 @@ Cypress.Commands.add('switchSnapAndRun', (variation, platform) => {
 // check if the correct telemetries were sent 
 Cypress.Commands.add('telemetryCheck', (transformers_count) => {
 if (transformers_count === '1'){
-    cy.get('@create.all').should('have.length', 2);
-    cy.get('@update.all').should('have.length', 1);
-    cy.get('@delete.all').should('have.length', 2);
+    cy.get('@MediaProcessorCreate.all').should('have.length', 1);
+    cy.get('@MediaTransformerCreate.all').should('have.length', 1);
+    cy.get('@MediaProcessorUpdate.all').should('have.length', 1);
+    cy.get('@MediaTransformerDelete.all').should('have.length', 1);
+    cy.get('@MediaProcessorDelete.all').should('have.length', 1);
 }
 if (transformers_count === '2'){
-    cy.get('@create.all').should('have.length', 3);
-    cy.get('@update.all').should('have.length', 1);
-    cy.get('@delete.all').should('have.length', 3); 
+    cy.get('@MediaProcessorCreate.all').should('have.length', 1);
+    cy.get('@MediaTransformerCreate.all').should('have.length', 2);
+    cy.get('@MediaProcessorUpdate.all').should('have.length', 1);
+    cy.get('@MediaTransformerDelete.all').should('have.length', 2);
+    cy.get('@MediaProcessorDelete.all').should('have.length', 1);
 }
 if (transformers_count === '3'){
-    cy.get('@create.all').should('have.length', 4);
-    cy.get('@update.all').should('have.length', 1);
-    cy.get('@delete.all').should('have.length', 4);  
+    cy.get('@MediaProcessorCreate.all').should('have.length', 1);
+    cy.get('@MediaTransformerCreate.all').should('have.length', 3);
+    cy.get('@MediaProcessorUpdate.all').should('have.length', 1);
+    cy.get('@MediaTransformerDelete.all').should('have.length', 3);
+    cy.get('@MediaProcessorDelete.all').should('have.length', 1);
 }
 })
 
