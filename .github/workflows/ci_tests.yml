@@ -36,6 +36,7 @@ jobs:
           wait-on: 'http://localhost:3000'
           browser: chrome
           record: true
+          spec: "cypress/integration/osx/*.js"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
@@ -59,6 +60,7 @@ jobs:
           wait-on: 'http://localhost:3000'
           browser: chrome
           record: true
+          spec: "cypress/integration/windows/*.js"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
