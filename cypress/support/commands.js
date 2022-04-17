@@ -49,7 +49,9 @@ Cypress.Commands.add('telemetryIntercept', (num) => {
             req.alias = "MediaTransformerDelete";
         } else if ((req.body.variation.indexOf('Delete') > -1) && (req.body.action.indexOf('MediaProcessor') > -1)){
             req.alias = "MediaProcessorDelete";
-        } 
+        } else if (req.body.variation.indexOf('Error') > -1){
+            req.alias = "error";
+        }
     })
 })
 
@@ -70,7 +72,7 @@ Cypress.Commands.add('snapAndRun', (variation, platform) => {
         cy.get($output).should('be.visible').and('have.class','video sinkVideo').and('have.css', 'margin', '0px 0px 20px');
         cy.get($output).matchImageSnapshot(variation+'_'+platform, {capture: 'viewport'}); // test transformed output matches to the saved output image
     })
-    cy.wait(33000);
+    cy.wait(31000);
     cy.get('#outputVideoContainer > .video').then(($output) => {
         cy.wait(200);
         cy.get($output).matchImageSnapshot('source_'+platform, {capture: 'viewport'}); // test after we destroy the transformer it matches the source image 
@@ -108,25 +110,25 @@ Cypress.Commands.add('switchSnapAndRun', (variation, platform) => {
 // check if the correct telemetries were sent 
 Cypress.Commands.add('telemetryCheck', (transformers_count) => {
 if (transformers_count === '1'){
-    cy.get('@MediaProcessorCreate.all').should('have.length', 1);
-    cy.get('@MediaTransformerCreate.all').should('have.length', 1);
-    cy.get('@MediaProcessorUpdate.all').should('have.length', 1);
-    cy.get('@MediaTransformerDelete.all').should('have.length', 1);
-    cy.get('@MediaProcessorDelete.all').should('have.length', 1);
+    cy.get('@MediaProcessorCreate.all').its('length').should('be.gte', 1);
+    cy.get('@MediaTransformerCreate.all').its('length').should('be.gte', 1);
+    cy.get('@MediaProcessorUpdate.all').its('length').should('be.gte', 1);
+    cy.get('@MediaTransformerDelete.all').its('length').should('be.gte', 1);
+    cy.get('@MediaProcessorDelete.all').its('length').should('be.gte', 1);
 }
 if (transformers_count === '2'){
-    cy.get('@MediaProcessorCreate.all').should('have.length', 1);
-    cy.get('@MediaTransformerCreate.all').should('have.length', 2);
-    cy.get('@MediaProcessorUpdate.all').should('have.length', 1);
-    cy.get('@MediaTransformerDelete.all').should('have.length', 2);
-    cy.get('@MediaProcessorDelete.all').should('have.length', 1);
+    cy.get('@MediaProcessorCreate.all').its('length').should('be.gte', 1);
+    cy.get('@MediaTransformerCreate.all').its('length').should('be.gte', 2);
+    cy.get('@MediaProcessorUpdate.all').its('length').should('be.gte', 1);
+    cy.get('@MediaTransformerDelete.all').its('length').should('be.gte', 2);
+    cy.get('@MediaProcessorDelete.all').its('length').should('be.gte', 1);
 }
 if (transformers_count === '3'){
-    cy.get('@MediaProcessorCreate.all').should('have.length', 1);
-    cy.get('@MediaTransformerCreate.all').should('have.length', 3);
-    cy.get('@MediaProcessorUpdate.all').should('have.length', 1);
-    cy.get('@MediaTransformerDelete.all').should('have.length', 3);
-    cy.get('@MediaProcessorDelete.all').should('have.length', 1);
+    cy.get('@MediaProcessorCreate.all').its('length').should('be.gte', 1);
+    cy.get('@MediaTransformerCreate.all').its('length').should('be.gte', 3);
+    cy.get('@MediaProcessorUpdate.all').its('length').should('be.gte', 1);
+    cy.get('@MediaTransformerDelete.all').its('length').should('be.gte', 3);
+    cy.get('@MediaProcessorDelete.all').its('length').should('be.gte', 1);
 }
 })
 
