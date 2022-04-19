@@ -1,13 +1,12 @@
+import { isSupported, MediaProcessor, MediaProcessorConnector, setMetadata, VonageMetadata, ErrorData, WarnData } from '../dist/media-processor.es';
 import CameraSource from './js/camera-source';
 import CanvasTransform from './js/canvas-transform';
 import EmptyTransformer from './js/empty-transform';
 import TextTransformer from './js/text-transform';
-import { isSupported, MediaProcessor, MediaProcessorConnector, setMetadata, VonageMetadata } from '../dist/media-processor.es';
 import ImageSource from './js/image-source';
 import StartTransformer from './js/start-error-transformer';
 import TransformTransformer from './js/transform-error-transformer';
 import FlushTransformer from './js/flush-error-transformer';
-import { ErrorData, WarnData } from '../lib/main';
 
 async function main() {
   try {
