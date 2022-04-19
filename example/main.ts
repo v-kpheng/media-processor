@@ -1,4 +1,4 @@
-import { isSupported, MediaProcessor, MediaProcessorConnector, setMetadata, VonageMetadata, ErrorData, WarnData } from '../dist/media-processor.es';
+import { isSupported, MediaProcessor, MediaProcessorConnector, setVonageMetadata, VonageMetadata, ErrorData, WarnData } from '../dist/media-processor.es';
 import CameraSource from './js/camera-source';
 import CanvasTransform from './js/canvas-transform';
 import EmptyTransformer from './js/empty-transform';
@@ -46,7 +46,7 @@ async function main() {
       appId: 'vonage-media-processor-example',
       sourceType: 'test'
     };
-    setMetadata(metadata);
+    setVonageMetadata(metadata);
     let mediaProcessor: MediaProcessor = new MediaProcessor();
     
     mediaProcessor.on('error', ((eventData: ErrorData) => {

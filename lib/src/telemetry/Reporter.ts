@@ -18,7 +18,9 @@ export type VonageSourceType = 'automation' | 'test' | 'vbc' | 'video' | 'voice'
     appId: string
 }
 
-let _metadata: VonageMetadata;
+declare global {
+  var _vonageMediaProcessorMetadata: VonageMetadata
+}
 
 /**
  * Sets some metadata for telemetry.
@@ -33,15 +35,16 @@ let _metadata: VonageMetadata;
  *     appId: 'vonage-media-processor-example',
  *     sourceType: 'test'
  *   };
- *   setMetadata(metadata);
+ *   setVonageMetadata(metadata);
+ *   let metadataGet: VonageMetadata = getVonageMetadata();
  * ```
  */
-export function setMetadata(metadata: VonageMetadata): void {
-  _metadata = metadata;
+export function setVonageMetadata(metadata: VonageMetadata): void {
+  globalThis._vonageMediaProcessorMetadata = metadata
 }
 
-function getMetadata(): VonageMetadata{
-  return _metadata;
+export function getVonageMetadata(): VonageMetadata{
+  return globalThis._vonageMediaProcessorMetadata
 }
 
 interface Report {
@@ -67,17 +70,17 @@ class ReportBuilder {
   private readonly _report: Report;
 
   constructor() {
-    const metadata: VonageMetadata = getMetadata();
+    const metadata: VonageMetadata = getVonageMetadata()
     this._report = {
       action: Optional.empty<string>(),
-      applicationId: Optional.ofNullable((metadata !== undefined) ? metadata.appId : null),
+      applicationId: Optional.ofNullable((metadata !== undefined && metadata != null) ? metadata.appId : null),
       timestamp: Date.now(),
       fps: Optional.empty<number>(),
       framesTransformed: Optional.empty<number>(),
       guid: Optional.empty<string>(),
       highestFrameTransformCpu: Optional.empty<number>(),
       message: Optional.empty<string>(),
-      source: Optional.ofNullable((metadata !== undefined) ? metadata.sourceType : null),
+      source: Optional.ofNullable((metadata !== undefined && metadata != null) ? metadata.sourceType : null),
       transformedFps: Optional.empty<number>(),
       transformerType: Optional.empty<string>(),
       variation: Optional.empty<string>(),
@@ -157,10 +160,11 @@ const serializeReport = (report: Report): string => {
 class Reporter {
     static report(report: Report): Promise<any>{
         return new Promise<any>((resolve, reject) => {
-          if(report.applicationId === null || report.source === null){
+          if(report.applicationId.isEmpty() || report.source.isEmpty()){
             resolve('success')
             return
           }
+
           let axiosInstance: AxiosInstance = axios.create()
           let config: AxiosRequestConfig = {
               timeout: 10000,
