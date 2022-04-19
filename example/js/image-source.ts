@@ -99,7 +99,45 @@ class ImageSource {
       })
     });
   }
-
+  setInvalidTrack(mediaProcessorConnector: MediaProcessorConnectorInterface): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      window.cancelAnimationFrame(ImageSource.currentAnimation);
+      if(this.switchCounter % 2 == 0){
+        console.log("loading background1");
+        this.stream_ = this.imageCanvas1_.captureStream(25);
+        this.videoTrack_ = this.stream_.getVideoTracks()[4]
+        this.videoMirrorHelper_.destroy()
+        this.videoMirrorHelper_.setStream(this.stream_);
+        window.requestAnimationFrame(ImageSource.step1)
+      }else{
+        console.log("loading background2");
+        this.stream_ = this.imageCanvas2_.captureStream(25);
+        this.videoTrack_ = this.stream_.getVideoTracks()[4]
+        this.videoMirrorHelper_.destroy()
+        this.videoMirrorHelper_.setStream(this.stream_);
+        window.requestAnimationFrame(ImageSource.step2)
+      }
+      this.switchCounter++;
+      this.mediaProcessorConnector_ = mediaProcessorConnector;
+      if (!this.stream_) 
+      {
+        console.log('[CameraSource] Requesting camera.');
+        reject("no stream")
+      }
+      this.mediaProcessorConnector_.setTrack(this.videoTrack_).then( newTrack => {
+        let processedStream = new MediaStream();
+        processedStream.addTrack(newTrack);
+        this.sink_.setMediaStream(processedStream);
+        resolve();
+      })
+      .catch(e => {
+        console.error(e.message)
+        reject(e)
+      })
+    });
+  }
+  
+  
   isSwitchSupported() :boolean{
     return true;
   }

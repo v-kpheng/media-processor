@@ -23,6 +23,8 @@ async function main() {
   const tranfromersCountSelector: any = document.getElementById('trasformersCount');
   const switchSourceSelector: any = document.getElementById('switchSource')
   const expectedRateSelector: any = document.getElementById('rate')
+  const invalidTrackSelector: any = document.getElementById('invalidTrack')
+
 
   let source_: any;
   async function updatePipelineSource() {
@@ -154,6 +156,12 @@ async function main() {
     switchSourceSelector.onclick = function(input: any){
       if(typeof source_.isSwitchSupported === 'function' && source_.isSwitchSupported()){
         source_.setMediaProcessorConnector(connector);
+      }
+    }
+
+    invalidTrackSelector.onclick = function(input: any){
+      if(typeof source_.isSwitchSupported === 'function' && source_.isSwitchSupported()){
+        source_.setInvalidTrack(connector);
       }
     }
 

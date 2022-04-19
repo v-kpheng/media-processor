@@ -46,7 +46,14 @@ describe('error testing for media proccessor', () => {
         cy.get('@flush_error.all').should('have.length', 1);
         cy.get('@consoleError').should('be.calledWith',"Cannot flush transformer", 2, "flush");
     })
-
+    //test set invalid track error
+    it('set invalid track', () => {
+        cy.configTest('1', '30');
+        cy.wait(2000);
+        cy.get("#invalidTrack").click()
+        cy.wait(2000)
+        cy.get('@consoleError').should('be.calledWith',"Failed to construct 'MediaStreamTrackProcessor': The provided value is not of type 'MediaStreamTrackProcessorInit'.");
+    })
     // test setTrackExpectedRate 
     it('setTrackExpectedRate within range', () => {
         cy.get('#rate').clear().type('25')
