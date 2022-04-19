@@ -1,11 +1,12 @@
 name: Cypress Tests
 on:
-  workflow_dispatch:
-    inputs:
-      targer_os:
-        description: 'test'
-        required: false
-        default: 'all'
+ push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches: [ develop ]
+
 
 jobs:
   job-all:
