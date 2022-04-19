@@ -43,14 +43,15 @@ Cypress.Commands.add('telemetryIntercept', (num) => {
         }else if ((req.body.variation.indexOf('Create') > -1) && (req.body.action.indexOf('MediaTransformer') > -1)){
             req.alias = "MediaTransformerCreate";
         } else if (req.body.variation.indexOf('Update') > -1) {
-                req.alias = "MediaProcessorUpdate";
+            req.alias = "MediaProcessorUpdate";
         } else if (req.body.variation.indexOf('QoS') > -1){
             req.alias = "MediaTransformerQos";
         } else if ((req.body.variation.indexOf('Delete') > -1) && (req.body.action.indexOf('MediaTransformer') > -1)){
             req.alias = "MediaTransformerDelete";
         } else if ((req.body.variation.indexOf('Delete') > -1) && (req.body.action.indexOf('MediaProcessor') > -1)){
             req.alias = "MediaProcessorDelete";
-        } 
+        }
+        req.reply({statusCode: 200})
     })
 })
 
