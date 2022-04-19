@@ -4,15 +4,8 @@ on:
     branches: [ develop ]
 
 jobs:
-  job-all:
-    runs-on: media_processor_auto_pr_osx_j
-    needs: [cypress-run-osx, cypress-run-windows]
-    steps:
-    - name: check job results
-      shell: bash
-      run: |
-          echo cypress-run-osx=${{ needs.cypress-run-osx.result }} cypress-run-windows=${{ needs.cypress-run-windows.result }} 
   cypress-run-osx:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
     runs-on: media_processor_auto_pr_osx_j
     steps:
       - name: Checkout
@@ -36,7 +29,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
   cypress-run-windows:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
     runs-on: media_processor_auto_pr_windows_aws1
     steps:
       - name: Checkout
