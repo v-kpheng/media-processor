@@ -29,14 +29,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "kgadasi"
-          git config --global user.email "karin.gadasi@vonage.com"
-
-          git add -f ./cypress/snapshots/*
-          git commit -m "OW-174 - update snapshots"
-          git push
 
   cypress-run-windows:
     if: "!contains(github.event.pull_request.title, '[skip ci]')"
@@ -63,11 +55,3 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "kgadasi"
-          git config --global user.email "karin.gadasi@vonage.com"
-
-          git add -f ./cypress/snapshots/*
-          git commit -m "OW-174 - update snapshots"
-          git push
