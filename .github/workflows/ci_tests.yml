@@ -29,6 +29,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: OW-174 - add snapshots
 
   cypress-run-windows:
     if: "!contains(github.event.pull_request.title, '[skip ci]')"
@@ -55,3 +58,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: OW-174 - add snapshots
