@@ -62,13 +62,15 @@ Cypress.Commands.add('configTest', (variation, time) => {
 })
 
 Cypress.Commands.add('snapAndRun', (variation, platform) => {
+    cy.wait(500);
     cy.get('#outputVideoContainer > .video').then(($output) => {
         cy.get($output).should('be.visible');
+        cy.wait(500);
         cy.get($output).matchImageSnapshot(variation+'_'+platform, {capture: 'viewport'}); // test transformed output matches to the saved output image
     })
     cy.wait(31000);
     cy.get('#outputVideoContainer > .video').then(($output) => {
-        cy.wait(200);
+        cy.wait(500);
         cy.get($output).matchImageSnapshot('source_'+platform, {capture: 'viewport'}); // test after we destroy the transformer it matches the source image 
     })
     cy.wait(3000);
@@ -77,20 +79,21 @@ Cypress.Commands.add('snapAndRun', (variation, platform) => {
 Cypress.Commands.add('switchSnapAndRun', (variation, platform) => {
     cy.get('#outputVideoContainer > .video').then(($output) => {
         cy.get($output).should('be.visible');
+        cy.wait(500);
         cy.get($output).matchImageSnapshot(variation+'_'+platform, {capture: 'viewport'}); // test transformed output matches to the saved output image
     })
     cy.wait(10000);
     cy.get('#switchSource').click();
     cy.get('#outputVideoContainer > .video').then(($output) => {
         cy.get($output).should('be.visible');
-        cy.wait(200);
+        cy.wait(500);
         cy.get($output).matchImageSnapshot(variation+'^_'+platform, {capture: 'viewport'}); // test transformed output matches to the saved output image after the switch
     })
     cy.wait(10000);
     cy.get('#switchSource').click();
     cy.get('#outputVideoContainer > .video').then(($output) => {
         cy.get($output).should('be.visible');
-        cy.wait(200);
+        cy.wait(500);
         cy.get($output).matchImageSnapshot(variation+'_'+platform, {capture: 'viewport'}); // test transformed output matches to the saved output image after the switch
     })
     cy.wait(13000);

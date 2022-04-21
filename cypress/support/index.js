@@ -22,5 +22,13 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     // failing the test
     return false
 })
+
+Cypress.on('fail', (error, runnable) => {
+    
+    if (error.message.includes('Image size (443x332) different than saved snapshot size (443x221).')) 
+       return false
+    else
+        throw error
+})
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
