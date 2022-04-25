@@ -110,7 +110,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           
- cypress-windows-canary:
+  cypress-windows-canary:
     if: "!contains(github.event.pull_request.title, '[skip ci]')"
     runs-on: media_processor_automation_push_develop_osx_aws1
     steps:
@@ -136,7 +136,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
                                                
- cypress-windows-edge:
+  cypress-windows-edge:
     if: "!contains(github.event.pull_request.title, '[skip ci]')"
     runs-on: media_processor_automation_push_main_windows_aws1
     steps:
@@ -161,3 +161,4 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
