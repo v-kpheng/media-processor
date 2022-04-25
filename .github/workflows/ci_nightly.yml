@@ -1,0 +1,165 @@
+
+name: Nighlty Cypress tests
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  pull_request:
+    branches: [ develop ]
+    
+jobs:
+  cypress-osx-chrome:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
+    runs-on: media_processor_auto_pr_osx_j
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build:dev
+          start: npm run dev 
+          wait-on: 'http://localhost:3000'
+          browser: chrome
+          record: true
+          spec: "cypress/integration/osx/*.js"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          
+  cypress-osx-canary:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
+    runs-on: media_processor_automation_push_develop_osx_j
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build:dev
+          start: npm run dev 
+          wait-on: 'http://localhost:3000'
+          browser: chrome:canary
+          record: true
+          spec: "cypress/integration/osx/*.js"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }} 
+          
+  cypress-osx-edge:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
+    runs-on: media_processor_automation_push_main_osx_j
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build:dev
+          start: npm run dev 
+          wait-on: 'http://localhost:3000'
+          browser: edge
+          record: true
+          spec: "cypress/integration/osx/*.js"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}    
+
+  cypress-windows-chrome:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
+    runs-on: media_processor_auto_pr_windows_aws1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build:dev
+          start: npm run dev 
+          wait-on: 'http://localhost:3000'
+          browser: chrome
+          record: true
+          spec: "cypress/integration/windows/*.js"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          
+ cypress-windows-canary:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
+    runs-on: media_processor_automation_push_develop_osx_aws1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build:dev
+          start: npm run dev 
+          wait-on: 'http://localhost:3000'
+          browser: chrome:canary
+          record: true
+          spec: "cypress/integration/windows/*.js"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+                                               
+ cypress-windows-edge:
+    if: "!contains(github.event.pull_request.title, '[skip ci]')"
+    runs-on: media_processor_automation_push_main_windows_aws1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build:dev
+          start: npm run dev 
+          wait-on: 'http://localhost:3000'
+          browser: edge
+          record: true
+          spec: "cypress/integration/windows/*.js"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
