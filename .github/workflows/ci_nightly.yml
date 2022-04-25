@@ -1,6 +1,4 @@
-
 name: Nighlty Cypress tests
-
 on:
   schedule:
     - cron: '0 0 * * *'
