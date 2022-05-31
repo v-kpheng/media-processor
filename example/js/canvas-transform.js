@@ -50,10 +50,10 @@ class CanvasTransform{
     }
     frame.close();
 
-    ctx.shadowColor = '#000';
+    ctx.shadowColor = '#34ebc3';
     ctx.shadowBlur = 20;
     ctx.lineWidth = 50;
-    ctx.strokeStyle = '#000';
+    ctx.strokeStyle = '#34ebc3';
     ctx.strokeRect(0, 0, width, height);
 
     if (!this.use_image_bitmap_) {
@@ -79,7 +79,7 @@ class CanvasTransform{
 
   /** @override */
   flush() {
-    console.log('[CanvasTransform] flush');
+    console.log('canvas transformer flush');
   }
 }
 

@@ -79,6 +79,7 @@ class VideoMirrorHelper { // eslint-disable-line no-unused-vars
       this.video_.pause();
       this.video_.srcObject = null;
       this.video_.parentNode.removeChild(this.video_);
+      this.video_ = null
     }
   }
 }

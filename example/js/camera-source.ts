@@ -16,7 +16,6 @@ class CameraSource {
     this.sink_ = new VideoSink();
     this.videoTrack_ = null;
     this.audioTrack_ = null;
-    this.init()
   }
 
   async init() {

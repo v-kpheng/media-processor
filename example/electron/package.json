@@ -1,7 +1,7 @@
 {
   "name": "test-electron",
   "version": "1.0.0",
-  "author": "Guy Mininberg <guy.mininberg@vonage.com>",
+  "author": "Guy Mininberg",
   "contributors": [
     "Guy Mininberg <guy.mininberg@vonage.com>"
   ],
@@ -10,10 +10,9 @@
   "scripts": {
     "start": "ELECTRON_DISABLE_SECURITY_WARNINGS=true electron ."
   },
-  "author": "Guy Mininberg",
   "license": "ISC",
   "dependencies": {
-    "electron": "^16.0.7",
+    "@vonage/electron": "^17.0.0",
     "systeminformation": "^5.10.0",
     "fs-extra": "^10.0.0",
     "uuid": "^8.3.2"
