@@ -44,7 +44,8 @@ async function main() {
     const testName: string = "db_canvas_test";
     const metadata: VonageMetadata = {
       appId: 'vonage-media-processor-example',
-      sourceType: 'test'
+      sourceType: 'test',
+      proxyUrl: 'https://ot-test-reverse-proxy.herokuapp.com'
     };
     setVonageMetadata(metadata);
     let mediaProcessor: MediaProcessor = new MediaProcessor();
