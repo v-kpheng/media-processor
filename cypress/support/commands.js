@@ -36,7 +36,7 @@ addMatchImageSnapshotCommand({
   });
 
 Cypress.Commands.add('telemetryIntercept', (num) => {
-    cy.intercept('POST', "https://hlg.dev.tokbox.com/dev/logging/vcp_webrtc", (req) => {
+    cy.intercept('POST', "https://hlg.tokbox.com/prod/logging/vcp_webrtc", (req) => {
         if ((req.body.variation.indexOf('Create') > -1) && (req.body.action.indexOf('MediaProcessor') > -1)){
             req.alias = "MediaProcessorCreate";
         }else if ((req.body.variation.indexOf('Create') > -1) && (req.body.action.indexOf('MediaTransformer') > -1)){
@@ -130,7 +130,7 @@ if (transformers_count === '3'){
 
 // intercept a certain error telemetry 
 Cypress.Commands.add('catchErrorTelemetry', (error_message, alias) => {
-    cy.intercept('POST', "https://hlg.dev.tokbox.com/dev/logging/vcp_webrtc", (req) => {
+    cy.intercept('POST', "https://hlg.tokbox.com/prod/logging/vcp_webrtc", (req) => {
         if (req.body.variation.indexOf('Error') > -1 && req.body.message.indexOf(error_message) > -1){
             req.alias = alias;
         }
