@@ -20,6 +20,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          install: npm install
           build: npm run build:dev
           start: npm run dev 
           wait-on: 'http://localhost:3000'
@@ -46,6 +47,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          install: npm install
           build: npm run build:dev
           start: npm run dev 
           wait-on: 'http://localhost:3000'
