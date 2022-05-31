@@ -182,7 +182,7 @@ class Reporter {
           }
           
           let telemetryServerUrl: string = 'hlg.tokbox.com/prod/logging/vcp_webrtc'
-          if(report.proxyUrl.isEmpty()){
+          if(!report.proxyUrl.isEmpty()){
             let proxy: string
             if(report.proxyUrl.get().slice(report.proxyUrl.get().length - 1) !== '/'){
               proxy = report.proxyUrl.get() + '/'
