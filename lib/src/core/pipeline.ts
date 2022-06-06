@@ -76,11 +76,22 @@ export type ErrorData = {
 }
 
 /**
+ * PipelineInfolData - life cycle information of pipeline
+ */
+export type PipelineInfolData = {
+  message: 'pipeline_ended_normal' | 'pipeline_ended_with_error' | 'pipeline_start_error' | 'pipeline_start_success'
+}
+
+/**
  * EventDataMap the options of event data
+ * @warn - see `WarnData`
+ * @error - see `ErrorData`
+ * @pipelineInfo - see `pipelineInfo`
  */
 export type EventDataMap = {
 	warn: WarnData
 	error: ErrorData
+  pipelineInfo: PipelineInfolData
 };
 
 // Note: TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL is expresed in frames (frames transformed).
@@ -294,6 +305,7 @@ class Pipeline extends Emittery<EventDataMap>{
         console.log('[Pipeline] Setup.');
         await writeable.abort()
         await orgReader.cancel()
+        this.emit('pipelineInfo', {message: 'pipeline_ended_normal'})
       })
       .catch(async e => {
         readable.cancel().then(() =>{
@@ -304,12 +316,14 @@ class Pipeline extends Emittery<EventDataMap>{
         })
         await writeable.abort(e)
         await orgReader.cancel(e)
+        this.emit('pipelineInfo', {message: 'pipeline_ended_with_error'})
       });
     } catch (e) {
+      this.emit('pipelineInfo', {message: 'pipeline_start_error'})
       this.destroy();
       return;
     }
-
+    this.emit('pipelineInfo', {message: 'pipeline_start_success'})
     console.log('[Pipeline] Pipeline started.')
   }
 
