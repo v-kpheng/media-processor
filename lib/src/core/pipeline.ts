@@ -79,7 +79,7 @@ export type ErrorData = {
  * PipelineInfolData - life cycle information of pipeline
  */
 export type PipelineInfolData = {
-  message: 'pipeline_ended_normal' | 'pipeline_ended_with_error' | 'pipeline_start_error' | 'pipeline_start_success'
+  message: 'pipeline_ended' | 'pipeline_ended_with_error' | 'pipeline_started' | 'pipeline_started_with_error'
 }
 
 /**
@@ -305,7 +305,7 @@ class Pipeline extends Emittery<EventDataMap>{
         console.log('[Pipeline] Setup.');
         await writeable.abort()
         await orgReader.cancel()
-        this.emit('pipelineInfo', {message: 'pipeline_ended_normal'})
+        this.emit('pipelineInfo', {message: 'pipeline_ended'})
       })
       .catch(async e => {
         readable.cancel().then(() =>{
@@ -319,11 +319,11 @@ class Pipeline extends Emittery<EventDataMap>{
         this.emit('pipelineInfo', {message: 'pipeline_ended_with_error'})
       });
     } catch (e) {
-      this.emit('pipelineInfo', {message: 'pipeline_start_error'})
+      this.emit('pipelineInfo', {message: 'pipeline_started_with_error'})
       this.destroy();
       return;
     }
-    this.emit('pipelineInfo', {message: 'pipeline_start_success'})
+    this.emit('pipelineInfo', {message: 'pipeline_started'})
     console.log('[Pipeline] Pipeline started.')
   }
 
