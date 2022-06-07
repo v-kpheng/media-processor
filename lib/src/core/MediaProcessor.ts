@@ -119,6 +119,9 @@ class MediaProcessor extends Emittery<EventDataMap> {
       this.pipeline_.on('error', ( eventData => {
         this.emit('error', eventData)
       }))
+      this.pipeline_.on('pipelineInfo', (eventData => {
+        this.emit('pipelineInfo', eventData)
+      }))
 
       if(this.trackExpectedRate_ != -1){
         this.pipeline_.setTrackExpectedRate(this.trackExpectedRate_);

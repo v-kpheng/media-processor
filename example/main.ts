@@ -1,4 +1,4 @@
-import { isSupported, MediaProcessor, MediaProcessorConnector, setVonageMetadata, VonageMetadata, ErrorData, WarnData } from '../dist/media-processor.es';
+import { isSupported, MediaProcessor, MediaProcessorConnector, setVonageMetadata, VonageMetadata, ErrorData, WarnData, PipelineInfolData } from '../dist/media-processor.es';
 import CameraSource from './js/camera-source';
 import CanvasTransform from './js/canvas-transform';
 import EmptyTransformer from './js/empty-transform';
@@ -55,6 +55,10 @@ async function main() {
  
     mediaProcessor.on('warn', ((eventData: WarnData) => {
       console.warn(eventData.dropInfo.requested, eventData.eventMetaData.transformerIndex, eventData.warningType);
+    }))
+
+    mediaProcessor.on('pipelineInfo', ( (eventData: PipelineInfolData) => {
+      console.info(eventData)
     }))
 
     if(expectedRateType != "-1"){
