@@ -78,7 +78,7 @@ export type ErrorData = {
 /**
  * PipelineInfolData - life cycle information of pipeline
  */
-export type PipelineInfolData = {
+export type PipelineInfoData = {
   message: 'pipeline_ended' | 'pipeline_ended_with_error' | 'pipeline_started' | 'pipeline_started_with_error'
 }
 
@@ -91,7 +91,7 @@ export type PipelineInfolData = {
 export type EventDataMap = {
 	warn: WarnData
 	error: ErrorData
-  pipelineInfo: PipelineInfolData
+  pipelineInfo: PipelineInfoData
 };
 
 // Note: TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL is expresed in frames (frames transformed).
@@ -166,17 +166,21 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
     }
   }
 
-  async transform(frame:any, controller:TransformStreamDefaultController) {
+  async transform(data:VideoFrame | AudioData, controller:TransformStreamDefaultController) {
     if (this.mediaTransformerQosReportStartTimestamp_ === 0) {
       this.mediaTransformerQosReportStartTimestamp_ = Date.now();
     }
-    this.videoHeight_ = frame?.displayHeight ?? 0;
-    this.videoWidth_ = frame?.displayWidth ?? 0;
+
+    if(data instanceof VideoFrame){
+      this.videoHeight_ = data?.displayHeight ?? 0;
+      this.videoWidth_ = data?.displayWidth ?? 0;
+    }
+    
     ++this.framesFromSource_;
     if(this.transformer_){
       if(!this.shouldStop_){
         try {
-          await this.transformer_.transform?.(frame, controller);
+          await this.transformer_.transform?.(data, controller);
           ++this.framesTransformed_;
           if (this.framesTransformed_ === TELEMETRY_MEDIA_TRANSFORMER_QOS_REPORT_INTERVAL) {
             this.mediaTransformerQosReport();
@@ -195,7 +199,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
           this.emit('error', msg)
         }
       }else{
-        frame.close()
+        data.close()
         this.flush(controller)
         controller.terminate()
       }
