@@ -1,4 +1,4 @@
-import { isSupported, MediaProcessor, MediaProcessorConnector, setVonageMetadata, VonageMetadata, ErrorData, WarnData, PipelineInfolData } from '../dist/media-processor.es';
+import { isSupported, MediaProcessor, MediaProcessorConnector, setVonageMetadata, VonageMetadata, ErrorData, WarnData, PipelineInfoData } from '../dist/media-processor.es';
 import CameraSource from './js/camera-source';
 import CanvasTransform from './js/canvas-transform';
 import EmptyTransformer from './js/empty-transform';
@@ -7,6 +7,7 @@ import ImageSource from './js/image-source';
 import StartTransformer from './js/start-error-transformer';
 import TransformTransformer from './js/transform-error-transformer';
 import FlushTransformer from './js/flush-error-transformer';
+import AudioTransform from './js/audio-transform';
 
 async function main() {
   try {
@@ -57,7 +58,7 @@ async function main() {
       console.warn(eventData.dropInfo.requested, eventData.eventMetaData.transformerIndex, eventData.warningType);
     }))
 
-    mediaProcessor.on('pipelineInfo', ( (eventData: PipelineInfolData) => {
+    mediaProcessor.on('pipelineInfo', ( (eventData: PipelineInfoData) => {
       console.info(eventData)
     }))
 
