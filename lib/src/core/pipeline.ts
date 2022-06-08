@@ -79,7 +79,7 @@ export type ErrorData = {
  * PipelineInfolData - life cycle information of pipeline
  */
 export type PipelineInfoData = {
-  message: 'pipeline_ended' | 'pipeline_ended_with_error' | 'pipeline_started' | 'pipeline_started_with_error'
+  message: 'pipeline_ended' | 'pipeline_ended_with_error' | 'pipeline_started' | 'pipeline_started_with_error' | 'pipeline_restarted' | 'pipeline_restarted_with_error'
 }
 
 /**
@@ -112,6 +112,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
   videoWidth_: number;
   trackExpectedRate_: number
   index_:number
+  controller_?: TransformStreamDefaultController
 
   constructor(transformer: Transformer, index: number){
     super()
@@ -147,6 +148,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
   }
 
   async start(controller:TransformStreamDefaultController){
+    this.controller_ = controller
     if(this.transformer_ && typeof(this.transformer_.start) === "function"){
       try {
         await this.transformer_.start(controller);
@@ -199,6 +201,7 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
           this.emit('error', msg)
         }
       }else{
+        console.warn('[Pipeline] flush from transform');
         data.close()
         this.flush(controller)
         controller.terminate()
@@ -237,6 +240,10 @@ class InternalTransformer extends Emittery<EventDataMap> implements Transformer 
 
   stop(){
     console.log('[Pipeline] Stop stream.');
+    if(this.controller_){
+      this.flush(this.controller_)
+      this.controller_.terminate()
+    }
     this.shouldStop_ = true
   }
 
