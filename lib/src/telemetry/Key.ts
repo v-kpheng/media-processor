@@ -10,7 +10,7 @@ export class Key {
     'transformer_start': 'Cannot start transformer',
     'transformer_transform': 'Cannot transform frame',
     'transformer_flush': 'Cannot flush transformer',
-    'readable_null': 'readable is not valid',
-    'writable_null': 'writable is not valid',
+    'readable_null': 'Readable is null',
+    'writable_null': 'Writable is null',
   };
 }

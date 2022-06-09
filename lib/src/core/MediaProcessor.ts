@@ -116,7 +116,7 @@ class MediaProcessor extends Emittery<EventDataMap> {
           .variation('Error')
           .build();
         Reporter.report(report);
-        reject('[MediaProcessor] readable is not valid.')
+        reject('[MediaProcessor] Readable is null.')
         return
       }
 
@@ -128,7 +128,7 @@ class MediaProcessor extends Emittery<EventDataMap> {
           .variation('Error')
           .build();
         Reporter.report(report);
-        reject('[MediaProcessor] writable is not valid.')
+        reject('[MediaProcessor] Writable is null.')
         return
       }
       let isPipelineReset: boolean = false
@@ -147,6 +147,7 @@ class MediaProcessor extends Emittery<EventDataMap> {
       }))
       this.pipeline_.on('pipelineInfo', (eventData => {
         if(isPipelineReset){
+          //The message is change here since this is the only place that knows about the restart.
           if(eventData.message === 'pipeline_started'){
             eventData.message = 'pipeline_restarted'
           } else if(eventData.message === 'pipeline_started_with_error'){

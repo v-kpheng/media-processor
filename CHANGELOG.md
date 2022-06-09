@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- new statuses that emitted of `pipelineInfo`
+- New list of pipeline statues that could be reported by the library
   - `pipeline_ended`
   - `pipeline_ended_with_error`
   - `pipeline_started`
