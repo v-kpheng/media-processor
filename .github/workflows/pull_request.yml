@@ -15,7 +15,7 @@ jobs:
       # Setup .npmrc file to publish to Github
       - uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: '16.13.0'
           registry-url: 'https://npm.pkg.github.com'
       - run: |
           npm ci
