@@ -1,4 +1,4 @@
-import Pipeline, { EventDataMap } from './pipeline'
+import Pipeline, { EventDataMap, PipelineInfoData } from './pipeline'
 import { Key } from '../telemetry/Key'
 import { Report, ReportBuilder, Reporter } from '../telemetry/Reporter';
 import { v4 as uuid } from 'uuid';
@@ -28,19 +28,19 @@ class MediaProcessor extends Emittery<EventDataMap> {
   /**
    * @private
    */
-   pipeline_!: Pipeline;
+   pipeline_?: Pipeline;
   /**
    * @private
    */
-   transformers_!: Array<Transformer>;
+   transformers_?: Array<Transformer>;
   /**
    * @private
    */
-   readable_!: ReadableStream;
+   readable_?: ReadableStream;
   /**
    * @private
    */
-   writable_!: WritableStream;
+   writable_?: WritableStream;
 
   /**
    * @private
@@ -106,9 +106,35 @@ class MediaProcessor extends Emittery<EventDataMap> {
           .build();
         Reporter.report(report);
         reject('[MediaProcessor] Need to set transformers.')
+        return
+      }
+      if(!this.readable_){
+        const report: Report = new ReportBuilder()
+          .action('MediaProcessor')
+          .guid(this.uuid_)
+          .message(Key.errors['readable_null'])
+          .variation('Error')
+          .build();
+        Reporter.report(report);
+        reject('[MediaProcessor] Readable is null.')
+        return
       }
 
+      if(!this.writable_){
+        const report: Report = new ReportBuilder()
+          .action('MediaProcessor')
+          .guid(this.uuid_)
+          .message(Key.errors['writable_null'])
+          .variation('Error')
+          .build();
+        Reporter.report(report);
+        reject('[MediaProcessor] Writable is null.')
+        return
+      }
+      let isPipelineReset: boolean = false
       if (this.pipeline_) {
+        isPipelineReset = true
+        this.pipeline_.clearListeners()
         this.pipeline_.destroy()
       }
 
@@ -120,6 +146,14 @@ class MediaProcessor extends Emittery<EventDataMap> {
         this.emit('error', eventData)
       }))
       this.pipeline_.on('pipelineInfo', (eventData => {
+        if(isPipelineReset){
+          //The message is change here since this is the only place that knows about the restart.
+          if(eventData.message === 'pipeline_started'){
+            eventData.message = 'pipeline_restarted'
+          } else if(eventData.message === 'pipeline_started_with_error'){
+            eventData.message = 'pipeline_restarted_with_error'
+          }
+        }
         this.emit('pipelineInfo', eventData)
       }))
 

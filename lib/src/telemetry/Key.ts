@@ -9,6 +9,8 @@ export class Key {
     'transformer_none': 'No transformers provided',
     'transformer_start': 'Cannot start transformer',
     'transformer_transform': 'Cannot transform frame',
-    'transformer_flush': 'Cannot flush transformer'
+    'transformer_flush': 'Cannot flush transformer',
+    'readable_null': 'Readable is null',
+    'writable_null': 'Writable is null',
   };
 }

@@ -143,7 +143,7 @@ jobs:
       - name: Node
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: '16.13.0'
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
